@@ -9,6 +9,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'rspec-rails'
   gem 'capybara'
+  gem 'database_cleaner', '~> 0.8.0'
 end
 
 group :production do
