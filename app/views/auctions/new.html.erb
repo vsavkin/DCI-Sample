@@ -1,0 +1,14 @@
+<h1>Create an Auction</h1>
+
+<%= form_for AuctionParams.empty, :url => auctions_path do |f| %>
+  <%= f.label :item_name %>
+  <%= f.text_field :item_name %>
+
+  <%= f.label :item_description %>
+  <%= f.text_field :item_description %>
+
+  <%= f.label :price %>
+  <%= f.text_field :price %>
+
+  <%= f.submit 'Create' %>
+<% end %>
