@@ -4,6 +4,8 @@ class CreateAuctions < ActiveRecord::Migration
       t.string :status
       t.decimal :buy_it_now_price
       t.references :item
+      t.references :seller
+      t.references :buyer
 
       t.timestamps
     end
