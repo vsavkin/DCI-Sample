@@ -17,6 +17,8 @@ ActiveRecord::Schema.define(:version => 20120617211048) do
     t.string   "status"
     t.decimal  "buy_it_now_price"
     t.integer  "item_id"
+    t.integer  "seller_id"
+    t.integer  "buyer_id"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
   end
