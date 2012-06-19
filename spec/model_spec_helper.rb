@@ -1,5 +1,6 @@
 require 'unit_spec_helper'
 require 'active_record'
+require 'virtus'
 require 'database_cleaner'
 
 RSpec.configure do |config|
