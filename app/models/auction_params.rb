@@ -4,7 +4,7 @@ class AuctionParams
 
   attribute :item_name, String
   attribute :item_description, String
-  attribute :price, Decimal
+  attribute :buy_it_now_price, Decimal
 
   def self.empty
     AuctionParams.new
