@@ -11,7 +11,7 @@ describe Item do
     end
 
     it "should raise an exception when errors" do
-      ->{Item.make nil, nil}.should raise_exception
+      ->{Item.make nil, nil}.should raise_exception(InvalidRecordException)
     end
   end
 end

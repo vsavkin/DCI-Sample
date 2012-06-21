@@ -20,7 +20,7 @@ describe Auction do
     end
 
     it "should raise an exception when errors" do
-      ->{Auction.make nil, nil, 10}.should raise_exception
+      ->{Auction.make nil, nil, 10}.should raise_exception(InvalidRecordException)
     end
   end
 
