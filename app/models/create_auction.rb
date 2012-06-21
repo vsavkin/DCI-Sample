@@ -15,8 +15,10 @@ class CreateAuction
 
   def create
     in_context do
-      seller.start_auction
+      return {auction: seller.start_auction}
     end
+  rescue InvalidRecordException => e
+    {errors: e.errors}
   end
 
   module Seller
@@ -34,7 +36,7 @@ class CreateAuction
 
     def create_auction seller
       item = create_item
-      Auction.make(seller, item, price)
+      Auction.make(seller, item, buy_it_now_price)
     end
 
     def create_item
