@@ -7,6 +7,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'rspec-rails'
   gem 'capybara'
+  gem 'capybara-webkit'
   gem 'database_cleaner'
 end
 
