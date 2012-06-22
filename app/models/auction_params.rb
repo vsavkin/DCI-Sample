@@ -9,4 +9,8 @@ class AuctionParams
   def self.empty
     AuctionParams.new
   end
+
+  def == other
+    attributes == other.attributes
+  end
 end

@@ -6,13 +6,21 @@ class AuctionsController < ApplicationController
   end
 
   def create
-    auction_params = AuctionParams.new(params[:auction_params])
-    result = CreateAuction.create current_user, auction_params
-
-    if result.has_key? :errors
-      render :status  => :unprocessable_entity, :json => result
+    result = create_auction(params[:auction_params])
+    if success? result
+      render :json => {auction_path: auction_path(result[:auction].id)}
     else
-      render :json => {auction_path: auction_path(result[:auction])}
+      render :json => {:errors => result[:errors]}, :status  => :unprocessable_entity
     end
+  end
+
+  private
+
+  def success? result
+    !result.has_key?(:errors)
+  end
+
+  def create_auction auction_params
+    CreateAuction.create current_user, AuctionParams.new(auction_params)
   end
 end
