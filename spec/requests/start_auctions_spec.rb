@@ -13,7 +13,7 @@ feature "Creating Auction", js: true do
     fill_in "Buy it now price", with: "200"
     click_button "Create"
 
-    page.should have_content("Successfully created auction.")
+    page.should have_content("Auction was successfully created.")
   end
 
   scenario "Showing errors when cannot create an auction" do

@@ -8,6 +8,7 @@ class AuctionsController < ApplicationController
   def create
     result = create_auction(params[:auction_params])
     if success? result
+      flash[:notice] = "Auction was successfully created."
       render :json => {auction_path: auction_path(result[:auction].id)}
     else
       render :json => {:errors => result[:errors]}, :status  => :unprocessable_entity
