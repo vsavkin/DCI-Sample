@@ -1,6 +1,8 @@
 Dcisample::Application.routes.draw do
 
   resources :auctions
+  root :to => 'auctions#new'
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

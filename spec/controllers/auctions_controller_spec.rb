@@ -19,10 +19,18 @@ describe AuctionsController do
     context "successful" do
       let(:auction){stub(id: 1)}
 
-      it "should render path to created auction" do
+      before :each do
         CreateAuction.should_receive(:create).with(current_user, auction_params).and_return({auction: auction})
+      end
+
+      it "should render path to created auction" do
         xhr :post, :create, request_params
         response.body.should == {auction_path: auction_path(auction.id)}.to_json
+      end
+
+      it "should notify about success" do
+        xhr :post, :create, request_params
+        flash[:notice].should match("successfully")
       end
     end
 

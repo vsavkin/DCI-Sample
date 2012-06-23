@@ -1,16 +1,21 @@
 <h1>Create an Auction</h1>
 
-<div id="auction_params_errors">
+<div id="auction_params_errors" class="alert alert-block alert-error" style="display:none;">
 </div>
+
 <%= form_for AuctionParams.empty, :url => auctions_path, :remote => true do |f| %>
-  <%= f.label :item_name %>
-  <%= f.text_field :item_name %>
+  <fieldset>
+    <%= f.label :item_name %>
+    <%= f.text_field :item_name %>
 
-  <%= f.label :item_description %>
-  <%= f.text_field :item_description %>
+    <%= f.label :item_description %>
+    <%= f.text_field :item_description %>
 
-  <%= f.label :buy_it_now_price %>
-  <%= f.text_field :buy_it_now_price %>
+    <%= f.label :buy_it_now_price %>
+    <%= f.text_field :buy_it_now_price %>
+  </fieldset>
 
-  <%= f.submit 'Create' %>
+  <div class="form-actions">
+    <%= f.submit "Create", :class => "btn btn-primary" %>
+  </div>
 <% end %>
