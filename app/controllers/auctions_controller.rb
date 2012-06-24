@@ -1,5 +1,11 @@
 class AuctionsController < ApplicationController
+  def index
+    @auctions = AuctionsPresenter.new(Auction.all)
+  end
+
   def show
+    auction_to_show = Auction.find(params[:id])
+    @auction = AuctionPresenter.new(auction_to_show)
   end
 
   def new

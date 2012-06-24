@@ -44,4 +44,33 @@ describe AuctionsController do
       end
     end
   end
+
+  describe "get 'INDEX'" do
+    before :each do
+      Auction.should_receive(:all).and_return([Auction.new])
+    end
+
+    it "should render the list of all auctions wrapped into a presenter" do
+      get :index
+
+      assigns(:auctions).class == AuctionsPresenter
+      assigns(:auctions).count == 1
+    end
+  end
+
+  describe "get 'SHOW'" do
+    let(:auction_id){1}
+    let(:auction){Auction.new}
+
+    before :each do
+      Auction.should_receive(:find).with(auction_id.to_s).and_return(auction)
+    end
+
+    it "should render an auction wrapped into a presenter" do
+      get :show, id: auction_id
+
+      assigns(:auction).class == AuctionPresenter
+      assigns(:auction).id == auction_id
+    end
+  end
 end

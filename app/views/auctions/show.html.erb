@@ -1,0 +1,18 @@
+<% content_for :title, @auction.item_name %>
+
+<h1><%= @auction.item_name %></h1>
+
+<p>
+  <b>Description</b><br>
+  <%= @auction.item_description %>
+</p>
+
+<p>
+  <b>Seller</b><br>
+  <%= @auction.seller_name %>
+</p>
+
+<p>
+  <b>Price</b><br>
+  <%= @auction.buy_it_now_price %>
+</p>

@@ -1,0 +1,23 @@
+<% content_for :title, "Auctions" %>
+
+<h1>Auctions</h1>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Seller</th>
+    <th>Created at</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @auctions.each do |auction| %>
+    <tr>
+      <td><%= auction.id %></td>
+      <td><%= link_to auction.item_name, auction_path(auction.id) %></td>
+      <td><%= auction.seller_name %></td>
+      <td><%= auction.created_at %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
