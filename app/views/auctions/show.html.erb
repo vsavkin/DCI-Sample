@@ -16,3 +16,8 @@
   <b>Price</b><br>
   <%= @auction.buy_it_now_price %>
 </p>
+
+
+<div class="form-actions">
+  <%= link_to "Buy it Now", auction_bids_path(@auction.id), class: "btn", method: "POST" %>
+</div>

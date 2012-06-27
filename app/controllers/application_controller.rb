@@ -3,6 +3,6 @@ class ApplicationController < ActionController::Base
 
   def current_user
     User.create!(name: 'user') if User.count == 0
-    User.first
+    User.last
   end
 end

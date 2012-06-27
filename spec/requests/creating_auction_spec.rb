@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature "Creating Auction", js: true do
+feature "Creating an Auction", js: true do
   background do
     User.create(name: "Sam the Seller")
   end
