@@ -11,14 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120617211048) do
+ActiveRecord::Schema.define(:version => 20120625114538) do
 
   create_table "auctions", :force => true do |t|
     t.string   "status"
     t.decimal  "buy_it_now_price"
     t.integer  "item_id"
     t.integer  "seller_id"
-    t.integer  "buyer_id"
+    t.integer  "winner_id"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
   end
