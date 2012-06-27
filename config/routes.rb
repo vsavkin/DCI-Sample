@@ -1,7 +1,10 @@
 Dcisample::Application.routes.draw do
 
-  resources :auctions
-  root :to => 'auctions#new'
+  resources :auctions do
+    resources :bids
+  end
+
+  root :to => 'auctions#index'
 
 
   # The priority is based upon order of creation:
