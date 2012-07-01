@@ -15,8 +15,4 @@ class BidsController < ApplicationController
   def make_bid auction
     Bidding.make_bid current_user, auction
   end
-
-  def success? result
-    !result.has_key?(:errors)
-  end
 end
