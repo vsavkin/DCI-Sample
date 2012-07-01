@@ -11,5 +11,10 @@ class AuctionPresenter
     @auction = auction
     @item = auction.item
     @seller = auction.seller
+    @buyer = auction.buyer
+  end
+
+  def buyer_name
+    @buyer.try(:name)
   end
 end

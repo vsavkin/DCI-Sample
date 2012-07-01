@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 feature "Buying an Item", js: true do
-  let(:seller){
+  let!(:seller){
     User.create!(name: "Sam the Seller")
   }
 
-  let(:item){
+  let!(:item){
     Item.create!(name: "Item 1")
   }
 
-  let(:auction){
+  let!(:auction){
     Auction.create!(item: item, seller: seller, buy_it_now_price: 10, status: Auction::STARTED)
   }
 
@@ -17,9 +17,13 @@ feature "Buying an Item", js: true do
     User.create!(name: "Bob")
 
     visit auction_path(auction)
-
     click_link "Buy It Now!"
-
     find("#winner").text.should == "Bob"
+  end
+
+  scenario "Trying to buy own item" do
+    visit auction_path(auction)
+    click_link "Buy It Now!"
+    page.should have_content("Buyer can't be equal to seller")
   end
 end
