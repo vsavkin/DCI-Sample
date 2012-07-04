@@ -1,18 +1,37 @@
+class Protocol
+  class << self
+    def message(name)
+      @messages ||= []
+      @messages << name
+    end
+    attr_reader :messages
+  end
+
+  def initialize(callbacks)
+    @callbacks = callbacks
+  end
+
+  def method_missing(name, *args)
+    super unless self.class.messages.include?(name)
+    @callbacks[name].call(*args)
+  end
+end
+
+class ResponseHandler < Protocol
+  message :success
+  message :failure
+end
+
+
 class BidsController < ApplicationController
   def create
     auction = Auction.find(params[:auction_id])
-    result = make_bid auction
-    if success? result
-      flash[:notice] = "Purchased successfully performed"
-      render :json => {auction_path: auction_path(result[:auction].id)}
-    else
-      render :json => {:errors => result[:errors]}, :status  => :unprocessable_entity
-    end
+    make_bid(auction, self)
   end
 
   private
 
-  def make_bid auction
-    Bidding.make_bid current_user, auction
+  def make_bid auction, response_handler
+    Bidding.make_bid current_user, auction, response_handler
   end
 end
