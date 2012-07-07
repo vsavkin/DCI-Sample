@@ -9,22 +9,22 @@ class Bidding
   end
 
   def initialize user, auction
-    @bidder = user.extend Buyer
+    @bidder = user.extend Winner
     @auction = auction.extend AuctionUpdater
   end
 
   def make_bid
     in_context do
-      return {auction: bidder.buy_item}
+      return {auction: bidder.win}
     end
   rescue InvalidRecordException => e
     {errors: e.errors}
   end
 
-  module Buyer
+  module Winner
     include ContextAccessor
 
-    def buy_item
+    def win
       context.auction.close_auction self
     end
   end
