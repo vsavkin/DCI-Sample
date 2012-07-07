@@ -1,5 +1,8 @@
 class User < ActiveRecord::Base
-  attr_accessible :name
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :trackable, :validatable
+
+  attr_accessible :name, :email, :password, :password_confirmation, :remember_me
 
   def address
     Address.new(address_country, address_city, address_street, address_postal_code)

@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.3'
 gem 'virtus'
+gem 'devise'
 
 group :development, :test do
   gem 'sqlite3'
