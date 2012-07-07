@@ -6,6 +6,11 @@
         <ul class="nav">
           <li><%= link_to "All Auctions", auctions_path %></li>
           <li><%= link_to "Sell an Item", new_auction_path %></li>
+          <% if user_signed_in? %>
+            <li><%= link_to 'Sign out', destroy_user_session_path, :method => :delete %></li>
+          <% else %>
+            <li><%= link_to 'Sign in', new_user_session_path %></li>
+          <% end %>
         </ul>
       </div>
     </div>
