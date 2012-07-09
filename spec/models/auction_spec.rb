@@ -1,8 +1,8 @@
 require 'model_spec_helper'
 
 describe Auction do
-  let(:user){User.create! name: 'John'}
-  let(:item){Item.create! name: 'Item'}
+  let(:user){User.new(name: 'John').tap{|user| user.save(validate: false)}}
+  let(:item){Item.create name: 'Item'}
 
   context "make" do
     it "should create an auction" do

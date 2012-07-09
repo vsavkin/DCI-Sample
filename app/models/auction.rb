@@ -2,7 +2,7 @@ class Auction < ActiveRecord::Base
   attr_accessible :seller, :item, :buy_it_now_price, :status
 
   belongs_to :item
-  belongs_to :buyer, :class_name => 'User'
+  belongs_to :winner, :class_name => 'User'
   belongs_to :seller, :class_name => 'User'
 
   PENDING = 'pending'
@@ -17,7 +17,7 @@ class Auction < ActiveRecord::Base
   validate :buyer_and_seller
 
   def buyer_and_seller
-    errors.add(:buyer_id, "can't be equal to seller") if seller_id == buyer_id
+    errors.add(:winner_id, "can't be equal to seller") if seller_id == winner_id
   end
 
   def start
@@ -31,7 +31,7 @@ class Auction < ActiveRecord::Base
   end
 
   def assign_buyer bidder
-    self.buyer = bidder
+    self.winner = bidder
     self.close
     self
   rescue ActiveRecord::RecordInvalid => e
