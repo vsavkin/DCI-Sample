@@ -1,7 +1,18 @@
 class User < ActiveRecord::Base
   attr_accessible :name
 
-  composed_of :address, mapping: [%w(address_country country), %w(address_city city),
-                                  %w(address_street street), %w(address_postal_code postal_code)],
-                        converter: proc{|a| Address.new(a[:country], a[:city], a[:street], a[:postal_code])}
+  def address
+    @address ||= Address.new(address_country, address_city, address_street, address_postal_code)
+  end
+
+  def address=(address)
+    self[:address_country] = address.country
+    self[:address_city] = address.city
+    self[:address_street] = address.street
+    self[:address_postal_code] = address.postal_code
+
+    @address = address
+  end
 end
+
+
