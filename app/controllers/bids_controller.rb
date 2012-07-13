@@ -1,18 +1,18 @@
 class BidsController < ApplicationController
+
   def create
-    auction = Auction.find(params[:auction_id])
-    result = make_bid auction
+    result = make_bid params[:auction_id]
     if success? result
       flash[:notice] = "Purchased successfully performed"
-      render :json => {auction_path: auction_path(result[:auction].id)}
     else
-      render :json => {:errors => result[:errors]}, :status  => :unprocessable_entity
+      flash[:error] = result[:errors].join("\n")
     end
+    redirect_to auction_path(params[:auction_id])
   end
 
   private
 
-  def make_bid auction
-    Bidding.make_bid current_user, auction
+  def make_bid auction_id
+    Bidding.make_bid current_user, auction_id
   end
 end
