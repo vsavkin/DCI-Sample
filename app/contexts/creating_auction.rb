@@ -1,10 +1,10 @@
-class CreateAuction
+class CreatingAuction
   include Context
 
   attr_reader :seller, :auction_creator
 
   def self.create user, auction_params
-    c = CreateAuction.new user, auction_params
+    c = CreatingAuction.new user, auction_params
     c.create
   end
 

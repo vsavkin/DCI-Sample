@@ -22,6 +22,6 @@ class AuctionsController < ApplicationController
   end
 
   def create_auction auction_params
-    CreateAuction.create current_user, AuctionParams.new(auction_params)
+    CreatingAuction.create current_user, AuctionParams.new(auction_params)
   end
 end
