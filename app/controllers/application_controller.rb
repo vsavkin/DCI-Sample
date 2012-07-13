@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  private
+  protected
 
   def success? result
     !result.has_key?(:errors)
