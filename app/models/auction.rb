@@ -17,7 +17,7 @@ class Auction < ActiveRecord::Base
   validate :buyer_and_seller
 
   def buyer_and_seller
-    errors.add(:winner_id, "can't be equal to seller") if seller_id == winner_id
+    errors.add(:base, "can't be equal to seller") if seller_id == winner_id
   end
 
   def start
@@ -30,10 +30,13 @@ class Auction < ActiveRecord::Base
     save!
   end
 
-  def assign_buyer bidder
+  def started?
+    status == STARTED
+  end
+
+  def assign_winner bidder
     self.winner = bidder
-    self.close
-    self
+    close
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
