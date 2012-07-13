@@ -26,5 +26,7 @@
 </p>
 
 <div class="form-actions">
-  <%= link_to "Buy It Now!", auction_bids_path(@auction.id), class: "btn", remote: true, method: "POST", id: "buy_it_now" %>
+  <% if @auction.can_buy_it_now?(current_user) %>
+    <%= link_to "Buy It Now!", auction_bids_path(@auction.id), class: "btn", method: "POST", id: "buy_it_now" %>
+  <% end %>
 </div>
