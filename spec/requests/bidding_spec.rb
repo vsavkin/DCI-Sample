@@ -16,15 +16,10 @@ feature "Buying an Item", js: true do
   scenario "Setting the buyer" do
     user = User.create!(name: "Bob", email: "mail1@email.com", password: "123456")
     do_login! user
-    visit auction_path(auction)
-    click_link "Buy It Now!"
-    find("#winner").text.should == "Bob"
-  end
 
-  scenario "Trying to buy own item" do
-    do_login! seller
     visit auction_path(auction)
     click_link "Buy It Now!"
-    page.should have_content("Winner can't be equal to seller")
+
+    find("#winner").text.should == "Bob"
   end
 end
