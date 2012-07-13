@@ -11,5 +11,14 @@ class AuctionPresenter
     @auction = auction
     @item = auction.item
     @seller = auction.seller
+    @winner = auction.winner
+  end
+
+  def winner_name
+    @winner.try(:name)
+  end
+
+  def can_buy_it_now? user
+    @auction.started? && @auction.seller != user
   end
 end

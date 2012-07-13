@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-feature "View Auctions", js: true do
+feature "Viewing Auctions", js: true do
   background do
-    seller = User.create!(name: "Sam the Seller")
+    seller = User.create(name: "Sam the Seller", email: "mail@email.com", password: "123456")
 
     item1 = Item.create!(name: "Item 1")
     Auction.create!(item: item1, seller: seller, buy_it_now_price: 10, status: Auction::STARTED)

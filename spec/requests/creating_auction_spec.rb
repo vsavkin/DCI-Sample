@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-feature "Creating Auction", js: true do
+feature "Creating an Auction", js: true do
+  let!(:user){User.create!(name: "Sam the Seller", email: "mail@email.com", password: "123456")}
+
   background do
-    User.create(name: "Sam the Seller")
+    do_login! user
   end
 
   scenario "Successfully creating an auction" do

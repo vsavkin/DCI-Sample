@@ -1,6 +1,6 @@
 require 'model_spec_helper'
 
-describe CreateAuction do
+describe CreatingAuction do
   let(:seller){User.new}
   let(:params){
     AuctionParams.new(item_name: "Item", item_description: "Description", buy_it_now_price: 10)
@@ -41,6 +41,6 @@ describe CreateAuction do
   private
 
   def create_auction
-    CreateAuction.new(seller, params).create
+    CreatingAuction.new(seller, params).create
   end
 end

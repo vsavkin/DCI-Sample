@@ -21,13 +21,7 @@ class AuctionsController < ApplicationController
     end
   end
 
-  private
-
-  def success? result
-    !result.has_key?(:errors)
-  end
-
   def create_auction auction_params
-    CreateAuction.create current_user, AuctionParams.new(auction_params)
+    CreatingAuction.create current_user, AuctionParams.new(auction_params)
   end
 end

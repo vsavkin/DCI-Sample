@@ -1,5 +1,8 @@
 <% content_for :title, @auction.item_name %>
 
+<div id="buy_it_now_errors" class="alert alert-block alert-error" style="display:none;">
+</div>
+
 <h1><%= @auction.item_name %></h1>
 
 <p>
@@ -16,3 +19,14 @@
   <b>Price</b><br>
   <%= @auction.buy_it_now_price %>
 </p>
+
+<p>
+  <b>Winner</b><br>
+  <div id="winner"><%= @auction.winner_name %></div>
+</p>
+
+<div class="form-actions">
+  <% if @auction.can_buy_it_now?(current_user) %>
+    <%= link_to "Buy It Now!", auction_bids_path(@auction.id), class: "btn", method: "POST", id: "buy_it_now" %>
+  <% end %>
+</div>
