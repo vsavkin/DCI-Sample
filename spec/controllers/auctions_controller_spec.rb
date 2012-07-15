@@ -1,8 +1,13 @@
 require 'spec_helper'
 
 describe AuctionsController do
+  let(:current_user){stub}
+
+  before :each do
+    controller.should_receive(:current_user).and_return(current_user)
+  end
+
   describe "post 'CREATE'" do
-    let(:current_user){stub}
 
     let(:auction_params){
       AuctionParams.new(item_name: 'name')
@@ -11,10 +16,6 @@ describe AuctionsController do
     let(:request_params){
       {auction_params: {item_name: 'name'}}
     }
-
-    before :each do
-      controller.should_receive(:current_user).and_return(current_user)
-    end
 
     context "successful" do
       let(:auction){stub(id: 1)}
