@@ -16,6 +16,11 @@ class Auction < ActiveRecord::Base
   validates :buy_it_now_price, :numericality => true
   validate :buyer_and_seller
   validates :end_date, presence: true
+  validate :end_date_period
+
+  def end_date_period
+    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
+  end
 
   def buyer_and_seller
     errors.add(:base, "can't be equal to seller") if seller_id == winner_id
