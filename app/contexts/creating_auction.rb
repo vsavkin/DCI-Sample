@@ -36,7 +36,7 @@ class CreatingAuction
 
     def create_auction seller
       item = create_item
-      Auction.make(seller, item, buy_it_now_price)
+      Auction.make(seller, item, buy_it_now_price, end_date)
     end
 
     def create_item

@@ -5,7 +5,7 @@ class AuctionPresenter
   def_delegator :@item, :description, :item_description
   def_delegator :@seller, :name, :seller_name
 
-  def_delegators :@auction, :buy_it_now_price, :id, :created_at
+  def_delegators :@auction, :buy_it_now_price, :id, :created_at, :end_date
 
   def initialize auction, current_user, view_context
     @auction = auction
