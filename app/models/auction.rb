@@ -15,6 +15,7 @@ class Auction < ActiveRecord::Base
   validates :status, inclusion: {in: [PENDING, STARTED, CLOSED, CANCELED]}
   validates :buy_it_now_price, :numericality => true
   validate :buyer_and_seller
+  validates :end_date, presence: true
 
   def buyer_and_seller
     errors.add(:base, "can't be equal to seller") if seller_id == winner_id
@@ -42,7 +43,6 @@ class Auction < ActiveRecord::Base
   end
 
   def self.make seller, item, buy_it_now_price, end_date
-    debugger
     create! seller: seller, item: item, buy_it_now_price: buy_it_now_price, end_date: end_date, status: PENDING
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
