@@ -18,14 +18,6 @@ class Auction < ActiveRecord::Base
   validates :end_date, presence: true
   validate :end_date_period
 
-  def end_date_period
-    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
-  end
-
-  def buyer_and_seller
-    errors.add(:base, "can't be equal to seller") if seller_id == winner_id
-  end
-
   def start
     self.status = STARTED
     save!
@@ -51,5 +43,15 @@ class Auction < ActiveRecord::Base
     create! seller: seller, item: item, buy_it_now_price: buy_it_now_price, end_date: end_date, status: PENDING
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
+  end
+
+  private
+
+  def end_date_period
+    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
+  end
+
+  def buyer_and_seller
+    errors.add(:base, "can't be equal to seller") if seller_id == winner_id
   end
 end
