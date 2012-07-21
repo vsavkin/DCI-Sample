@@ -8,13 +8,13 @@ describe AuctionsController do
   end
 
   describe "post 'CREATE'" do
-
+    let(:end_date) {{"end_date(1i)" => "2013", "end_date(2i)"=>"8", "end_date(3i)"=>"26", "end_date(4i)"=>"15", "end_date(5i)"=>"24"}}
     let(:auction_params){
-      AuctionParams.new(item_name: 'name')
+      AuctionParams.new({item_name: 'name'}.merge(end_date))
     }
 
     let(:request_params){
-      {auction_params: {item_name: 'name'}}
+      {auction_params: {item_name: 'name'}.merge(end_date)}
     }
 
     context "successful" do
