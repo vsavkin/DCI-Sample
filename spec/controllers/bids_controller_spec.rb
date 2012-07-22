@@ -14,7 +14,7 @@ describe BidsController do
 
     context "successful" do
       it "should render path to created auction" do
-        Bidding.should_receive(:make_bid).with(current_user, auction_id).and_return({})
+        Bidding.should_receive(:buy).with(current_user, auction_id).and_return({})
 
         post :create, request_params
         response.should redirect_to(auction_path auction_id)
@@ -25,7 +25,7 @@ describe BidsController do
       let(:errors){["error1"]}
 
       it "should render errors" do
-        Bidding.should_receive(:make_bid).and_return({errors: errors})
+        Bidding.should_receive(:buy).and_return({errors: errors})
 
         post :create, request_params
         response.should redirect_to(auction_path auction_id)

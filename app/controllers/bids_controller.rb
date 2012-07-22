@@ -13,6 +13,6 @@ class BidsController < ApplicationController
   private
 
   def make_bid auction_id
-    Bidding.make_bid current_user, auction_id
+    Bidding.buy current_user, auction_id
   end
 end
