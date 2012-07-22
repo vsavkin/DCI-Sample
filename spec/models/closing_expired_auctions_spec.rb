@@ -5,6 +5,6 @@ describe ClosingExpiredAuctions do
 
   it "expires auctions closing each one" do
     auction.should_receive(:closes_when_expired)
-    described_class.expire [auction]
+    described_class.close [auction]
   end
 end

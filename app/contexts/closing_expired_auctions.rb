@@ -3,15 +3,15 @@ class ClosingExpiredAuctions
 
   attr_reader :auctions
 
-  def self.expire auctions
-    ClosingExpiredAuctions.new(auctions).expire
+  def self.close auctions
+    ClosingExpiredAuctions.new(auctions).close
   end
 
   def initialize auctions
     @auctions = auctions
   end
 
-  def expire
+  def close
     in_context do
       auctions.each do |auction|
         auction.closes_when_expired
