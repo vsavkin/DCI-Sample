@@ -18,6 +18,14 @@ class Auction < ActiveRecord::Base
   validates :end_date, presence: true
   validate :end_date_period
 
+  def closes_when_expired
+    update_attribute(:status, CLOSED) if expired?
+  end
+
+  def expired?
+    end_date < DateTime.current
+  end
+
   def start
     self.status = STARTED
     save!
@@ -30,6 +38,10 @@ class Auction < ActiveRecord::Base
 
   def started?
     status == STARTED
+  end
+
+  def closed?
+    status == CLOSED
   end
 
   def assign_winner bidder
