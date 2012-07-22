@@ -60,7 +60,7 @@ class Auction < ActiveRecord::Base
   private
 
   def end_date_period
-    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
+    errors.add(:end_date, "must be in the future") if expired?
   end
 
   def buyer_and_seller
