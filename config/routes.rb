@@ -1,3 +1,4 @@
+require 'sidekiq/web'
 Dcisample::Application.routes.draw do
 
   devise_for :users
@@ -7,7 +8,7 @@ Dcisample::Application.routes.draw do
   end
 
   root :to => 'auctions#index'
-
+  mount Sidekiq::Web => '/sidekiq'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
