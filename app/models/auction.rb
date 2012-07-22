@@ -16,6 +16,8 @@ class Auction < ActiveRecord::Base
   validates :buy_it_now_price, :numericality => true
   validate :buyer_and_seller
 
+  has_many :bids
+
   def buyer_and_seller
     errors.add(:base, "can't be equal to seller") if seller_id == winner_id
   end
@@ -37,6 +39,12 @@ class Auction < ActiveRecord::Base
   def assign_winner bidder
     self.winner = bidder
     close
+  rescue ActiveRecord::RecordInvalid => e
+    raise InvalidRecordException.new(e.record.errors.full_messages)
+  end
+
+  def make_bid bidder, amount
+    bids.create! user: bidder, amount: amount
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
