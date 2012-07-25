@@ -22,4 +22,15 @@ feature "Buying an Item", js: true do
 
     find("#winner").text.should == "Bob"
   end
+
+  #scenario "Making a bid" do
+  #  user = User.create!(name: "Bob", email: "mail1@email.com", password: "123456")
+  #  do_login! user
+  #
+  #  visit auction_path(auction)
+  #
+  #  click_link "Buy It Now!"
+  #
+  #  find("#winner").text.should == "Bob"
+  #end
 end
