@@ -3,14 +3,14 @@ class Bidding
 
   class ValidationException < Exception; end
 
-  def self.bid user, auction_id, amount
-    auction = Auction.find(auction_id)
+  def self.bid user, bid_params
+    auction = Auction.find(bid_params.auction_id)
     bidding = Bidding.new user, auction
-    bidding.bid amount
+    bidding.bid bid_params.amount
   end
 
-  def self.buy user, auction_id
-    auction = Auction.find(auction_id)
+  def self.buy user, bid_params
+    auction = Auction.find(bid_params.auction_id)
     bidding = Bidding.new user, auction
     bidding.bid auction.buy_it_now_price
   end

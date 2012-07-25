@@ -8,16 +8,20 @@ describe BidsController do
     controller.should_receive(:current_user).and_return(current_user)
   end
 
-
   describe "post 'CREATE'" do
     let(:amount){"999"}
+
     let(:request_params){
-      {auction_id: auction_id, amount: amount}
+      {auction_id: auction_id, bid: {amount: amount}}
+    }
+
+    let(:bid_params){
+      BidParams.new(auction_id: auction_id, amount: amount)
     }
 
     context "successful" do
       it "should render path to created auction" do
-        Bidding.should_receive(:bid).with(current_user, auction_id, amount).and_return({})
+        Bidding.should_receive(:bid).with(current_user, bid_params).and_return({})
 
         post :create, request_params
         response.should redirect_to(auction_path auction_id)
@@ -42,9 +46,13 @@ describe BidsController do
       {auction_id: auction_id}
     }
 
+    let(:bid_params){
+      BidParams.new(auction_id: auction_id)
+    }
+
     context "successful" do
       it "should render path to created auction" do
-        Bidding.should_receive(:buy).with(current_user, auction_id).and_return({})
+        Bidding.should_receive(:buy).with(current_user, bid_params).and_return({})
 
         post :buy, request_params
         response.should redirect_to(auction_path auction_id)

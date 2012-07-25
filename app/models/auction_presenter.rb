@@ -23,18 +23,23 @@ class AuctionPresenter
 
   def render_actions
     "".tap do |res|
-      res << render_buy_it_now_button if can_buy_it_now?
+      res << render_buy_it_now_button if can_bid?
+      res << render_bid_button if can_bid?
     end.html_safe
   end
 
   private
 
-  def can_buy_it_now?
+  def can_bid?
     @auction.started? && @auction.seller != @current_user
   end
 
   def render_buy_it_now_button
-    h.link_to "Buy It Now!", h.auction_bids_path(id), class: "btn", method: "POST", id: "buy_it_now"
+    h.link_to "Buy It Now!", h.buy_auction_bids_path(id), class: "btn", method: "POST", id: "buy_it_now"
+  end
+
+  def render_bid_button
+    h.render partial: "bid", locals: {auction_id: id}
   end
 
   def h
