@@ -18,14 +18,6 @@ class Auction < ActiveRecord::Base
   validates :end_date, presence: true
   validate :end_date_period
 
-  def closes_when_expired
-    update_attribute(:status, CLOSED) if expired?
-  end
-
-  def expired?
-    end_date < DateTime.current
-  end
-
   def start
     self.status = STARTED
     save!
@@ -60,7 +52,7 @@ class Auction < ActiveRecord::Base
   private
 
   def end_date_period
-    errors.add(:end_date, "must be in the future") if expired?
+    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
   end
 
   def buyer_and_seller

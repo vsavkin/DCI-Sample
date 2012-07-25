@@ -8,6 +8,7 @@ class ClosingExpiredAuctions
   end
 
   def initialize auctions
+    auctions.map{|auction| auction.extend Expirable}
     @auctions = auctions
   end
 
@@ -16,6 +17,16 @@ class ClosingExpiredAuctions
       auctions.each do |auction|
         auction.closes_when_expired
       end
+    end
+  end
+
+  module Expirable
+    def expired?
+      end_date < DateTime.current
+    end
+
+    def closes_when_expired
+      update_attribute(:status, CLOSED) if expired?
     end
   end
 end
