@@ -26,7 +26,7 @@ class ClosingExpiredAuctions
     end
 
     def closes_when_expired
-      update_attribute(:status, CLOSED) if expired?
+      close if expired?
     end
   end
 end
