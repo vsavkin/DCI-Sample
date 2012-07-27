@@ -23,8 +23,8 @@ class AuctionPresenter
 
   def render_actions
     "".tap do |res|
-      res << render_buy_it_now_button if can_bid?
       res << render_bid_button if can_bid?
+      res << render_buy_it_now_button if can_bid?
     end.html_safe
   end
 
