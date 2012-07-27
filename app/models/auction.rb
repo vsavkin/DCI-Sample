@@ -36,6 +36,10 @@ class Auction < ActiveRecord::Base
     status == STARTED
   end
 
+  def last_bid
+    bids.last
+  end
+
   def assign_winner bidder
     self.winner = bidder
     close

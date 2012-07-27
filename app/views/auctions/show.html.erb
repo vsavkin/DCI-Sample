@@ -20,10 +20,9 @@
   <%= @auction.buy_it_now_price %>
 </p>
 
-<p>
-  <b>Winner</b><br>
-  <div id="winner"><%= @auction.winner_name %></div>
-</p>
+<%= @auction.render_last_bid %>
+
+<%= @auction.render_winner %>
 
 <div class="form-actions">
   <%= @auction.render_actions %>

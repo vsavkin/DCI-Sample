@@ -9,6 +9,7 @@ class AuctionPresenter
 
   def initialize auction, current_user, view_context
     @auction = auction
+
     @item = auction.item
     @seller = auction.seller
     @winner = auction.winner
@@ -17,8 +18,22 @@ class AuctionPresenter
     @current_user = current_user
   end
 
-  def winner_name
-    @winner.try(:name)
+  def render_winner
+    return "" unless @winner
+    h.content_tag :p do
+      h.content_tag(:b, "Winner") +
+      h.tag(:br) +
+      @winner.name
+    end
+  end
+
+  def render_last_bid
+    return "" unless @auction.last_bid
+    h.content_tag :p do
+      h.content_tag(:b, "Last Bid") +
+      h.tag(:br) +
+      @auction.last_bid.amount.to_s
+    end
   end
 
   def render_actions
