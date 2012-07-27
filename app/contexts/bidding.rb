@@ -46,9 +46,9 @@ class Bidding
     end
 
     def validate_bid
+      validate_bidding_against_yourself
       context.biddable.validate_status
       context.bid_creator.validate
-      validate_bidding_against_yourself
     end
 
     def validate_bidding_against_yourself
@@ -99,7 +99,11 @@ class Bidding
     end
 
     def validate_presence
-      raise ValidationException, "Invalid amount." unless valid?
+      raise ValidationException, validation_message unless valid?
+    end
+
+    def validation_message
+      errors.full_messages.join(", ")
     end
 
     def validate_against_last_bid
