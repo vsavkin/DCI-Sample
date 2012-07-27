@@ -75,10 +75,6 @@ class Bidding
       assign_winner context.bidder if winning_bid? bid
     end
 
-    def last_bid
-      bids.last
-    end
-
     def last_bidder
       return nil unless last_bid
       last_bid.user

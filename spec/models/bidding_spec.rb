@@ -9,7 +9,7 @@ describe Bidding do
   before :each do
     auction.stub(:assign_winner)
     auction.stub(:make_bid)
-    auction.stub(:bids){[]}
+    auction.stub(:last_bid){nil}
   end
 
   context "making a bid" do
@@ -37,13 +37,13 @@ describe Bidding do
     end
 
     it "should error when the bidder is bidding against himself" do
-      auction.stub(:bids).and_return([bid(bidder, amount - 1)])
+      auction.stub(:last_bid).and_return(bid(bidder, amount - 1))
       response = make_bid(amount)
       response[:errors].should be_present
     end
 
     it "should error when the bid is not smaller then the previous one + 1 dollar" do
-      auction.stub(:bids).and_return([bid(another_bidder, amount)])
+      auction.stub(:last_bid).and_return(bid(another_bidder, amount))
       response = make_bid(amount)
       response[:errors].should be_present
     end
