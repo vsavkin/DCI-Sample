@@ -6,7 +6,7 @@ class BidParams
   attribute :amount, Decimal
   attribute :auction_id, Integer
 
-  validates :amount, numericality: true
+  validates :amount, numericality: {greater_than: 0}
 
   def self.empty
     BidParams.new({})
