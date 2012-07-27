@@ -5,26 +5,28 @@ class Bidding
 
   def self.bid user, bid_params
     auction = Auction.find(bid_params.auction_id)
-    bidding = Bidding.new user, auction
-    bidding.bid bid_params.amount
+    bidding = Bidding.new user, auction, bid_params
+    bidding.bid
   end
 
   def self.buy user, bid_params
     auction = Auction.find(bid_params.auction_id)
-    bidding = Bidding.new user, auction
-    bidding.bid auction.buy_it_now_price
+    bid_params.amount = auction.buy_it_now_price
+    bidding = Bidding.new user, auction, bid_params
+    bidding.bid
   end
 
-  attr_reader :bidder, :biddable
+  attr_reader :bidder, :biddable, :bid_creator
 
-  def initialize user, auction
+  def initialize user, auction, bid_params
     @bidder = user.extend Bidder
     @biddable = auction.extend Biddable
+    @bid_creator = bid_params.extend BidCreator
   end
 
-  def bid amount
+  def bid
     in_context do
-      bid = biddable.create_bid amount
+      bid = bidder.create_bid
       return {bid: bid}
     end
   rescue InvalidRecordException => e
@@ -33,39 +35,53 @@ class Bidding
     {errors: [e.message]}
   end
 
-  #seller cannot bid
-  module Biddable
+  module Bidder
     include ContextAccessor
 
-    def create_bid amount
-      validate_bid amount
-      bid = make_bid(context.bidder, amount)
-      close_auction bid
+    def create_bid
+      validate_bid
+      bid = context.biddable.create_bid
+      context.biddable.close_auction bid
       return bid
     end
 
-    def validate_bid amount
-      validate_status
-      context.bidder.validate_bidding_against_yourself bids
-      validate_against_amount amount
-      validate_against_buy_it_now amount
+    def validate_bid
+      context.biddable.validate_status
+      context.bid_creator.validate
+      validate_bidding_against_yourself
+    end
+
+    def validate_bidding_against_yourself
+      raise ValidationException, "Bidding against yourself is not allowed." if last_bidder?
+    end
+
+    def last_bidder?
+      context.biddable.last_bidder == self
+    end
+  end
+
+  module Biddable
+    include ContextAccessor
+
+    def create_bid
+      make_bid(context.bidder, context.bid_creator.amount)
     end
 
     def validate_status
       raise ValidationException, "Bidding on closed auction is not allowed." unless started?
     end
 
-    def validate_against_amount amount
-      return if bids.blank?
-      raise ValidationException, "The amount must be greater than the last bid." if bids.last.amount >= amount
-    end
-
-    def validate_against_buy_it_now amount
-      raise ValidationException, "Bid cannot exceed the buy it now price." if amount > buy_it_now_price
-    end
-
     def close_auction bid
       assign_winner context.bidder if winning_bid? bid
+    end
+
+    def last_bid
+      bids.last
+    end
+
+    def last_bidder
+      return nil unless last_bid
+      last_bid.user
     end
 
     def winning_bid? bid
@@ -73,16 +89,27 @@ class Bidding
     end
   end
 
-  module Bidder
+  module BidCreator
     include ContextAccessor
 
-    def validate_bidding_against_yourself bids
-      return if bids.blank?
-      raise ValidationException, "Bidding against yourself is not allowed." if last_bidder?(bids)
+    def validate
+      validate_presence
+      validate_against_last_bid
+      validate_against_buy_it_now
     end
 
-    def last_bidder? bids
-      bids.last.user == self
+    def validate_presence
+      raise ValidationException, "Invalid amount." unless valid?
+    end
+
+    def validate_against_last_bid
+      last_bid = context.biddable.last_bid
+      raise ValidationException, "The amount must be greater than the last bid." if last_bid && last_bid.amount >= amount
+    end
+
+    def validate_against_buy_it_now
+      buy_it_now_price = context.biddable.buy_it_now_price
+      raise ValidationException, "Bid cannot exceed the buy it now price." if amount > buy_it_now_price
     end
   end
 end

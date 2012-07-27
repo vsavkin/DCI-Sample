@@ -12,7 +12,7 @@ describe BidsController do
     let(:amount){"999"}
 
     let(:request_params){
-      {auction_id: auction_id, bid: {amount: amount}}
+      {auction_id: auction_id, bid_params: {amount: amount}}
     }
 
     let(:bid_params){

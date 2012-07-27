@@ -26,6 +26,16 @@ describe Bidding do
       response[:bid].should == bid
     end
 
+    it "should error when no amount" do
+      response = make_bid(nil)
+      response[:errors].should be_present
+    end
+
+    it "should error when invalid amount" do
+      response = make_bid("INVALID")
+      response[:errors].should be_present
+    end
+
     it "should error when the bidder is bidding against himself" do
       auction.stub(:bids).and_return([bid(bidder, amount - 1)])
       response = make_bid(amount)
@@ -78,6 +88,7 @@ describe Bidding do
   end
 
   def make_bid amount
-    Bidding.new(bidder, auction).bid(amount)
+    params = BidParams.new(amount: amount, auction: auction)
+    Bidding.new(bidder, auction, params).bid
   end
 end
