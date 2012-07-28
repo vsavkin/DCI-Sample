@@ -36,6 +36,13 @@ class AuctionPresenter
     end
   end
 
+  def render_all_bids
+    return "" unless seller?
+    h.content_tag :ul, id: "bids" do
+      h.content_tag(:h3, "All Bids") + all_bids
+    end
+  end
+
   def render_actions
     "".tap do |res|
       res << render_bid_button if can_bid?
@@ -44,6 +51,18 @@ class AuctionPresenter
   end
 
   private
+
+  def all_bids
+    @auction.bids.map do |bid|
+      h.content_tag :li do
+        "#{bid.user.name} $#{bid.amount}"
+      end.html_safe
+    end.join("").html_safe
+  end
+
+  def seller?
+    @auction.seller == @current_user
+  end
 
   def can_bid?
     @auction.started? && @auction.seller != @current_user
