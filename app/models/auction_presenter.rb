@@ -9,6 +9,7 @@ class AuctionPresenter
 
   def initialize auction, current_user, view_context
     @auction = auction
+
     @item = auction.item
     @seller = auction.seller
     @winner = auction.winner
@@ -17,24 +18,62 @@ class AuctionPresenter
     @current_user = current_user
   end
 
-  def winner_name
-    @winner.try(:name)
+  def render_winner
+    return "" unless @winner
+    h.content_tag :p do
+      h.content_tag(:b, "Winner") +
+      h.tag(:br) +
+      @winner.name
+    end
+  end
+
+  def render_last_bid
+    return "" unless @auction.last_bid
+    h.content_tag :p do
+      h.content_tag(:b, "Last Bid") +
+      h.tag(:br) +
+      @auction.last_bid.amount.to_s
+    end
+  end
+
+  def render_all_bids
+    return "" unless seller?
+    h.content_tag :ul, id: "bids" do
+      h.content_tag(:h3, "All Bids") + all_bids
+    end
   end
 
   def render_actions
     "".tap do |res|
-      res << render_buy_it_now_button if can_buy_it_now?
+      res << render_bid_button if can_bid?
+      res << render_buy_it_now_button if can_bid?
     end.html_safe
   end
 
   private
 
-  def can_buy_it_now?
+  def all_bids
+    @auction.bids.map do |bid|
+      h.content_tag :li do
+        "#{bid.user.name} $#{bid.amount}"
+      end.html_safe
+    end.join("").html_safe
+  end
+
+  def seller?
+    @auction.seller == @current_user
+  end
+
+  def can_bid?
     @auction.started? && @auction.seller != @current_user
   end
 
   def render_buy_it_now_button
-    h.link_to "Buy It Now!", h.auction_bids_path(id), class: "btn", method: "POST", id: "buy_it_now"
+    h.link_to "Buy It Now!", h.buy_auction_bids_path(id), class: "btn", method: "POST", id: "buy_it_now"
+  end
+
+  def render_bid_button
+    h.render partial: "bid", locals: {auction_id: id}
   end
 
   def h

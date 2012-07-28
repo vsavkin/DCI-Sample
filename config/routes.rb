@@ -3,7 +3,11 @@ Dcisample::Application.routes.draw do
   devise_for :users
 
   resources :auctions do
-    resources :bids
+    resources :bids do
+      collection do
+        post :buy
+      end
+    end
   end
 
   root :to => 'auctions#index'

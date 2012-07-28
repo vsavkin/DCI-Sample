@@ -1,0 +1,4 @@
+<%= form_for BidParams.empty, url: auction_bids_path(auction_id) do |f| %>
+  <%= f.text_field :amount %>
+  <%= f.submit "Bid", class: "btn" %>
+<% end %>
