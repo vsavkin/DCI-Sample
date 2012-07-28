@@ -40,9 +40,7 @@ class Bidding
 
     def create_bid
       validate_bid
-      bid = context.biddable.create_bid
-      context.biddable.close_auction bid
-      return bid
+      context.biddable.create_bid
     end
 
     def validate_bid
@@ -64,14 +62,16 @@ class Bidding
     include ContextAccessor
 
     def create_bid
-      make_bid(context.bidder, context.bid_creator.amount)
+      bid = make_bid(context.bidder, context.bid_creator.amount)
+      close_auction_if_winning_bid bid
+      return bid
     end
 
     def validate_status
       raise ValidationException, "Bidding on closed auction is not allowed." unless started?
     end
 
-    def close_auction bid
+    def close_auction_if_winning_bid bid
       assign_winner context.bidder if winning_bid? bid
     end
 
