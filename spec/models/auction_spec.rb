@@ -25,6 +25,21 @@ describe Auction do
     end
   end
 
+  context "making a bid" do
+    let(:auction){Auction.make seller, item, 10, end_date}
+    let(:bidder){ObjectMother.create_user(email: "bidder@example.com")}
+
+    it "should create a bid" do
+      bid = auction.make_bid bidder, 5
+      bid.amount.should == 5
+      auction.reload.bids.should == [bid]
+    end
+
+    it "should raise an exception when errors" do
+      ->{auction.make_bid nil, nil}.should raise_exception(InvalidRecordException)
+    end
+  end
+
   context "starting an auction" do
     let(:auction){Auction.make seller, item, 10, end_date}
 

@@ -18,6 +18,8 @@ class Auction < ActiveRecord::Base
   validates :end_date, presence: true
   validate :end_date_period
 
+  has_many :bids
+
   def start
     self.status = STARTED
     save!
@@ -32,8 +34,8 @@ class Auction < ActiveRecord::Base
     status == STARTED
   end
 
-  def closed?
-    status == CLOSED
+  def last_bid
+    bids.last
   end
 
   def assign_winner bidder
@@ -43,8 +45,15 @@ class Auction < ActiveRecord::Base
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
 
+  def make_bid bidder, amount
+    bids.create! user: bidder, amount: amount
+  rescue ActiveRecord::RecordInvalid => e
+    raise InvalidRecordException.new(e.record.errors.full_messages)
+  end
+
   def self.make seller, item, buy_it_now_price, end_date
-    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price, end_date: end_date, status: PENDING
+    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price,
+            end_date: end_date, status: PENDING
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
