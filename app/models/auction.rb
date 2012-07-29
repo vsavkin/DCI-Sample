@@ -4,6 +4,7 @@ class Auction < ActiveRecord::Base
   belongs_to :item
   belongs_to :winner, :class_name => 'User'
   belongs_to :seller, :class_name => 'User'
+  has_many :bids
 
   PENDING = 'pending'
   STARTED = 'started'
@@ -12,13 +13,13 @@ class Auction < ActiveRecord::Base
 
   validates :item, presence: true
   validates :seller, presence: true
+  validates :end_date, presence: true
+
   validates :status, inclusion: {in: [PENDING, STARTED, CLOSED, CANCELED]}
   validates :buy_it_now_price, :numericality => true
-  validate :buyer_and_seller
-  validates :end_date, presence: true
-  validate :end_date_period
 
-  has_many :bids
+  validate :buyer_and_seller
+  validate :end_date_period
 
   def start
     self.status = STARTED
