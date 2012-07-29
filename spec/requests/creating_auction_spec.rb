@@ -12,7 +12,7 @@ feature "Creating an Auction", js: true do
     fill_in "auction_params_item_name", with: "Stamps"
     fill_in "Item description", with: "Collection of stamps"
     fill_in "Buy it now price", with: "200"
-    select 1.year.from_now.year.to_s, from: "auction_params_end_date_1i"
+    select "2017", from: "auction_params_end_date_1i"
     click_button "Create"
 
     page.should have_content("Auction was successfully created.")
