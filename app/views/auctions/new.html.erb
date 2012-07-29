@@ -15,6 +15,9 @@
 
     <%= f.label :buy_it_now_price %>
     <%= f.text_field :buy_it_now_price %>
+
+    <%= f.label :end_date %>
+    <%= f.datetime_select :end_date, {use_month_numbers: true, start_year: Date.today.year}, {class: 'datetime'} %>
   </fieldset>
 
   <div class="form-actions">

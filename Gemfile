@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.3'
 gem 'virtus'
 gem 'devise'
+gem 'sidekiq'
+gem 'slim'
+gem 'sinatra', :require => nil
 
 group :development, :test do
   gem 'sqlite3'

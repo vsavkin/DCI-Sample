@@ -1,9 +1,10 @@
 class Auction < ActiveRecord::Base
-  attr_accessible :seller, :item, :buy_it_now_price, :status
+  attr_accessible :seller, :item, :buy_it_now_price, :status, :end_date
 
   belongs_to :item
   belongs_to :winner, :class_name => 'User'
   belongs_to :seller, :class_name => 'User'
+  has_many :bids
 
   PENDING = 'pending'
   STARTED = 'started'
@@ -12,15 +13,13 @@ class Auction < ActiveRecord::Base
 
   validates :item, presence: true
   validates :seller, presence: true
+  validates :end_date, presence: true
+
   validates :status, inclusion: {in: [PENDING, STARTED, CLOSED, CANCELED]}
   validates :buy_it_now_price, :numericality => true
+
   validate :buyer_and_seller
-
-  has_many :bids
-
-  def buyer_and_seller
-    errors.add(:base, "can't be equal to seller") if seller_id == winner_id
-  end
+  validate :end_date_period
 
   def start
     self.status = STARTED
@@ -53,9 +52,20 @@ class Auction < ActiveRecord::Base
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
 
-  def self.make seller, item, buy_it_now_price
-    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price, status: PENDING
+  def self.make seller, item, buy_it_now_price, end_date
+    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price,
+            end_date: end_date, status: PENDING
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
+  end
+
+  private
+
+  def end_date_period
+    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
+  end
+
+  def buyer_and_seller
+    errors.add(:base, "can't be equal to seller") if seller_id == winner_id
   end
 end
