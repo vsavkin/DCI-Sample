@@ -12,7 +12,7 @@ describe CreatingAuction do
   }
 
   let(:auction_params) {
-    {item_name: "Item", item_description: "Description", buy_it_now_price: 10}.merge(end_date_params)
+    {item_name: "Item", item_description: "Description", buy_it_now_price: 10, extendable: true}.merge(end_date_params)
   }
 
   let(:params){
@@ -26,7 +26,7 @@ describe CreatingAuction do
   context "successful creation" do
     before :each do
       Item.should_receive(:make).with("Item", "Description").and_return(expected_item)
-      Auction.should_receive(:make).with(seller, expected_item, 10, end_date).and_return(expected_auction)
+      Auction.should_receive(:make).with(seller, expected_item, 10, true, end_date).and_return(expected_auction)
     end
 
     it "should create an auction" do

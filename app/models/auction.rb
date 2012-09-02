@@ -1,5 +1,5 @@
 class Auction < ActiveRecord::Base
-  attr_accessible :seller, :item, :buy_it_now_price, :status, :end_date
+  attr_accessible :seller, :item, :buy_it_now_price, :status, :end_date, :extendable
 
   belongs_to :item
   belongs_to :winner, :class_name => 'User'
@@ -52,8 +52,8 @@ class Auction < ActiveRecord::Base
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
 
-  def self.make seller, item, buy_it_now_price, end_date
-    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price,
+  def self.make seller, item, buy_it_now_price, extendable, end_date
+    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price, extendable: extendable,
             end_date: end_date, status: PENDING
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)

@@ -4,10 +4,11 @@ describe Auction do
   let(:seller){ObjectMother.create_user(email: "seller@example.com")}
   let(:item){Item.create name: "Item"}
   let(:end_date){DateTime.current + 1.day}
+  let(:extendable) { true }
 
   context "making a new auction" do
     it "should create an auction" do
-      auction = Auction.make seller, item, 10, end_date
+      auction = Auction.make seller, item, 10, extendable, end_date
       auction.reload
 
       auction.seller.should == seller
@@ -16,17 +17,17 @@ describe Auction do
     end
 
     it "should set status to pending" do
-      auction = Auction.make seller, item, 10, end_date
+      auction = Auction.make seller, item, 10, extendable, end_date
       auction.status.should == Auction::PENDING
     end
 
     it "should raise an exception when errors" do
-      ->{Auction.make nil, nil, 10, end_date}.should raise_exception(InvalidRecordException)
+      ->{Auction.make nil, nil, 10, extendable, end_date}.should raise_exception(InvalidRecordException)
     end
   end
 
   context "making a bid" do
-    let(:auction){Auction.make seller, item, 10, end_date}
+    let(:auction){Auction.make seller, item, 10, extendable, end_date}
     let(:bidder){ObjectMother.create_user(email: "bidder@example.com")}
 
     it "should create a bid" do
@@ -41,7 +42,7 @@ describe Auction do
   end
 
   context "starting an auction" do
-    let(:auction){Auction.make seller, item, 10, end_date}
+    let(:auction){Auction.make seller, item, 10, extendable, end_date}
 
     it "should set status to started" do
       auction.start
@@ -50,7 +51,7 @@ describe Auction do
   end
 
   context "assigning a winner" do
-    let(:auction){Auction.make seller, item, 10, end_date }
+    let(:auction){Auction.make seller, item, 10, extendable, end_date }
     let(:winner){ObjectMother.create_user(email: "seller@winner.com") }
 
     it "should set the winner" do
