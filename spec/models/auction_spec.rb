@@ -50,6 +50,15 @@ describe Auction do
     end
   end
 
+  context "extending an auction" do
+    let(:auction){Auction.make seller, item, 10, extendable, end_date}
+
+    it "should set status to started" do
+      auction.extend_end_date
+      auction.reload.end_date.should == end_date + Auction::EXTENDING_TIME
+    end
+  end
+
   context "assigning a winner" do
     let(:auction){Auction.make seller, item, 10, extendable, end_date }
     let(:winner){ObjectMother.create_user(email: "seller@winner.com") }

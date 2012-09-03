@@ -10,6 +10,7 @@ class Auction < ActiveRecord::Base
   STARTED = 'started'
   CLOSED = 'closed'
   CANCELED = 'canceled'
+  EXTENDING_TIME = 30.minutes
 
   validates :item, presence: true
   validates :seller, presence: true
@@ -37,6 +38,11 @@ class Auction < ActiveRecord::Base
 
   def last_bid
     bids.last
+  end
+
+  def extend_end_date
+    self.end_date = 30.minutes.since self.end_date
+    save!
   end
 
   def assign_winner bidder
