@@ -64,6 +64,8 @@ class Bidding
     def create_bid
       bid = make_bid(context.bidder, context.bid_creator.amount)
       close_auction_if_winning_bid bid
+      extend_auction_if_almost_closed
+
       return bid
     end
 
@@ -75,6 +77,10 @@ class Bidding
       assign_winner context.bidder if winning_bid? bid
     end
 
+    def extend_auction_if_almost_closed
+      extend_end_date if almost_closed?
+    end
+
     def last_bidder
       return nil unless last_bid
       last_bid.user
@@ -82,6 +88,10 @@ class Bidding
 
     def winning_bid? bid
       buy_it_now_price == bid.amount
+    end
+
+    def almost_closed?
+      end_date - Time.now < 30.minutes
     end
   end
 

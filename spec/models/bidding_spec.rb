@@ -2,12 +2,13 @@ require 'model_spec_helper'
 
 describe Bidding do
   let(:buy_it_now_price){10000}
-  let(:auction){double("Auction", buy_it_now_price: buy_it_now_price, started?: true)}
+  let(:auction){double("Auction", buy_it_now_price: buy_it_now_price, started?: true, end_date: 20.minutes.from_now)}
   let(:another_bidder){User.new}
   let(:bidder){User.new}
 
   before :each do
     auction.stub(:assign_winner)
+    auction.stub(:extend_end_date)
     auction.stub(:make_bid)
     auction.stub(:last_bid){nil}
   end
@@ -65,6 +66,23 @@ describe Bidding do
         response = make_bid(buy_it_now_price + 1)
         response[:errors].should be_present
       end
+
+      context "extending the auction" do
+        before :each do
+          expect_bid_creation bidder, buy_it_now_price
+        end
+
+        it "should extend when almost closed" do
+          auction.should_receive(:extend_end_date)
+          make_bid buy_it_now_price
+        end
+
+        it "should not extend when still has time" do
+          auction.stub(end_date: 40.minutes.from_now)
+          auction.should_not_receive(:extend_end_date)
+          make_bid buy_it_now_price
+        end
+      end
     end
   end
 
@@ -72,7 +90,7 @@ describe Bidding do
     it "should return errors when cannot make a bid" do
       auction.should_receive(:make_bid).and_raise(InvalidRecordException.new([:error]))
       make_bid(999).should == {errors: [:error]}
-     end
+    end
   end
 
   private
