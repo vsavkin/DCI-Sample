@@ -8,7 +8,7 @@ describe Bidding do
 
   before :each do
     auction.stub(:assign_winner)
-    auction.stub(:extend_end_date)
+    auction.stub(:extend_end_date_for)
     auction.stub(:make_bid)
     auction.stub(:last_bid){nil}
   end
@@ -16,13 +16,18 @@ describe Bidding do
   context "making a bid" do
     let(:amount) {999}
 
-    it "should associate the bid with the auction" do
+    example do
       expect_bid_creation bidder, amount
       make_bid(amount)
     end
 
+    it "should associate the bid with the auction" do
+      bid_creation bidder, amount
+      make_bid(amount)
+    end
+
     it "should return the created bid" do
-      bid = expect_bid_creation bidder, amount
+      bid = bid_creation bidder, amount
       response = make_bid(amount)
       response[:bid].should == bid
     end
@@ -57,7 +62,7 @@ describe Bidding do
 
     context "buying" do
       it "should assign winner" do
-        expect_bid_creation bidder, buy_it_now_price
+        bid_creation bidder, buy_it_now_price
         auction.should_receive(:assign_winner).with(bidder)
         make_bid buy_it_now_price
       end
@@ -66,22 +71,28 @@ describe Bidding do
         response = make_bid(buy_it_now_price + 1)
         response[:errors].should be_present
       end
+    end
 
-      context "extending the auction" do
-        before :each do
-          expect_bid_creation bidder, buy_it_now_price
-        end
+    context "extending the auction" do
+      it "should extend the auction when the bid is made within extending interval" do
+        bid_creation bidder, amount
+        auction.stub(end_date: Time.now)
+        auction.should_receive(:extend_end_date_for).with(Bidding::EXTENDING_INTERVAL)
+        make_bid amount
+      end
 
-        it "should extend when almost closed" do
-          auction.should_receive(:extend_end_date)
-          make_bid buy_it_now_price
-        end
+      it "should not extend when more time left" do
+        bid_creation bidder, amount
+        auction.stub(end_date: Time.now + 31.minute)
+        auction.should_not_receive(:extend_end_date_for)
+        make_bid amount
+      end
 
-        it "should not extend when still has time" do
-          auction.stub(end_date: 40.minutes.from_now)
-          auction.should_not_receive(:extend_end_date)
-          make_bid buy_it_now_price
-        end
+      it "should not extend when auction is not started" do
+        bid_creation bidder, buy_it_now_price
+        auction.stub(end_date: Time.now, started?: false)
+        auction.should_not_receive(:extend_end_date_for)
+        make_bid amount
       end
     end
   end
@@ -94,6 +105,12 @@ describe Bidding do
   end
 
   private
+
+  def bid_creation bidder, amount
+    bid = bid(bidder, amount)
+    auction.stub(:make_bid).with(bidder, amount).and_return(bid)
+    return bid
+  end
 
   def expect_bid_creation bidder, amount
     bid = bid(bidder, amount)

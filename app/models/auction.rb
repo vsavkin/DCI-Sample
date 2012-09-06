@@ -10,7 +10,6 @@ class Auction < ActiveRecord::Base
   STARTED = 'started'
   CLOSED = 'closed'
   CANCELED = 'canceled'
-  EXTENDING_TIME = 30.minutes
 
   validates :item, presence: true
   validates :seller, presence: true
@@ -40,8 +39,8 @@ class Auction < ActiveRecord::Base
     bids.last
   end
 
-  def extend_end_date
-    self.end_date = 30.minutes.since self.end_date
+  def extend_end_date_for interval
+    self.end_date = interval.since self.end_date
     save!
   end
 
@@ -59,7 +58,10 @@ class Auction < ActiveRecord::Base
   end
 
   def self.make seller, item, buy_it_now_price, extendable, end_date
-    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price, extendable: extendable,
+    create! seller: seller,
+            item: item,
+            buy_it_now_price: buy_it_now_price,
+            extendable: extendable,
             end_date: end_date, status: PENDING
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)

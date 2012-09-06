@@ -1,5 +1,6 @@
 class Bidding
   include Context
+  EXTENDING_INTERVAL = 30.minutes
 
   class ValidationException < Exception; end
 
@@ -65,7 +66,6 @@ class Bidding
       bid = make_bid(context.bidder, context.bid_creator.amount)
       close_auction_if_winning_bid bid
       extend_auction_if_almost_closed
-
       return bid
     end
 
@@ -77,10 +77,6 @@ class Bidding
       assign_winner context.bidder if winning_bid? bid
     end
 
-    def extend_auction_if_almost_closed
-      extend_end_date if almost_closed?
-    end
-
     def last_bidder
       return nil unless last_bid
       last_bid.user
@@ -90,8 +86,12 @@ class Bidding
       buy_it_now_price == bid.amount
     end
 
+    def extend_auction_if_almost_closed
+      extend_end_date_for EXTENDING_INTERVAL if almost_closed? and started?
+    end
+
     def almost_closed?
-      end_date - Time.now < 30.minutes
+      end_date - Time.now < EXTENDING_INTERVAL
     end
   end
 

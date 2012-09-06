@@ -54,8 +54,8 @@ describe Auction do
     let(:auction){Auction.make seller, item, 10, extendable, end_date}
 
     it "should set status to started" do
-      auction.extend_end_date
-      auction.reload.end_date.should == end_date + Auction::EXTENDING_TIME
+      auction.extend_end_date_for 30.minutes
+      auction.reload.end_date.should == end_date + 30.minutes
     end
   end
 
