@@ -19,10 +19,11 @@ ActiveRecord::Schema.define(:version => 20120902213841) do
     t.integer  "item_id"
     t.integer  "seller_id"
     t.integer  "winner_id"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
     t.datetime "end_date"
-    t.boolean  "extendable"
+    t.datetime "extended_end_date"
+    t.boolean  "extendable",        :default => false
   end
 
   create_table "bids", :force => true do |t|
