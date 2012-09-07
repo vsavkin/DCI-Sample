@@ -36,7 +36,8 @@ class CreatingAuction
 
     def create_auction seller
       item = create_item
-      Auction.make(seller, item, buy_it_now_price, end_date)
+      creation_attrs = attributes.merge(item: item, seller: seller)
+      Auction.make(creation_attrs)
     end
 
     def create_item

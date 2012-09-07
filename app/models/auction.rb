@@ -1,5 +1,5 @@
 class Auction < ActiveRecord::Base
-  attr_accessible :seller, :item, :buy_it_now_price, :status, :end_date
+  attr_accessible :seller, :item, :buy_it_now_price, :status, :end_date, :extendable
 
   belongs_to :item
   belongs_to :winner, :class_name => 'User'
@@ -39,6 +39,11 @@ class Auction < ActiveRecord::Base
     bids.last
   end
 
+  def extend_end_date_for interval
+    self.end_date = interval.since self.end_date
+    save!
+  end
+
   def assign_winner bidder
     self.winner = bidder
     close
@@ -52,9 +57,10 @@ class Auction < ActiveRecord::Base
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
 
-  def self.make seller, item, buy_it_now_price, end_date
-    create! seller: seller, item: item, buy_it_now_price: buy_it_now_price,
-            end_date: end_date, status: PENDING
+  def self.make attrs
+    create_attrs = attrs.slice(:seller, :item, :buy_it_now_price, :extendable, :end_date)
+
+    create! create_attrs.merge(status: PENDING)
   rescue ActiveRecord::RecordInvalid => e
     raise InvalidRecordException.new(e.record.errors.full_messages)
   end
@@ -62,7 +68,7 @@ class Auction < ActiveRecord::Base
   private
 
   def end_date_period
-    errors.add(:end_date, "must be in the future") if end_date < DateTime.current
+    errors.add(:end_date, "must be in the future") if end_date && end_date < DateTime.current
   end
 
   def buyer_and_seller

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 feature "Buying an Item", js: true do
-  let(:end_date) { DateTime.current + 1.day}
+  let(:end_date) { Time.zone.now + 1.day}
 
   let!(:seller){
     User.create!(name: "Sam the Seller", email: "mail@email.com", password: "123456")
@@ -12,7 +12,7 @@ feature "Buying an Item", js: true do
   }
 
   let!(:auction){
-    Auction.create!(item: item, seller: seller, buy_it_now_price: 10, end_date: end_date, status: Auction::STARTED)
+    make_auction end_date
   }
 
   let(:bidder){
@@ -39,12 +39,31 @@ feature "Buying an Item", js: true do
     page.should have_content("Your bid is accepted")
   end
 
-  scenario "Making an invalid bi" do
+  scenario "Making an invalid bid" do
     visit auction_path(auction)
     fill_in "bid_params_amount", with: "INVALID"
 
     click_button "Bid"
 
     page.should have_content("is not a number")
+  end
+
+  scenario "Making a bid that extends an auction for extra 30 minutes" do
+    end_date = Time.zone.now + 29.minutes
+    auction = make_auction end_date
+    visit auction_path(auction)
+
+    fill_in "bid_params_amount", with: "5"
+
+    click_button "Bid"
+    page.should have_content("Your bid is accepted")
+
+    auction.reload.end_date.should == end_date + 30.minutes
+  end
+
+  private
+
+  def make_auction end_date
+    Auction.create!(item: item, seller: seller, buy_it_now_price: 10, end_date: end_date, status: Auction::STARTED)
   end
 end

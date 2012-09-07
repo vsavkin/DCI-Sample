@@ -6,6 +6,7 @@ class AuctionParams
   attribute :item_description, String
   attribute :buy_it_now_price, Decimal
   attribute :end_date, DateTime
+  attribute :extendable, Boolean
 
   def initialize params
     super build_end_date(params)
