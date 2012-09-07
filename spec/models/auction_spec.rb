@@ -4,11 +4,13 @@ describe Auction do
   let(:seller){ObjectMother.create_user(email: "seller@example.com")}
   let(:item){Item.create name: "Item"}
   let(:end_date){DateTime.current + 1.day}
-  let(:extendable) { true }
+
+  let(:creation_attrs){ {seller: seller, item: item, buy_it_now_price: 10, extendable: true, end_date: end_date} }
+  let(:auction){Auction.make creation_attrs}
 
   context "making a new auction" do
     it "should create an auction" do
-      auction = Auction.make seller, item, 10, extendable, end_date
+      auction = Auction.make creation_attrs
       auction.reload
 
       auction.seller.should == seller
@@ -17,17 +19,16 @@ describe Auction do
     end
 
     it "should set status to pending" do
-      auction = Auction.make seller, item, 10, extendable, end_date
+      auction = Auction.make creation_attrs
       auction.status.should == Auction::PENDING
     end
 
     it "should raise an exception when errors" do
-      ->{Auction.make nil, nil, 10, extendable, end_date}.should raise_exception(InvalidRecordException)
+      ->{Auction.make({})}.should raise_exception(InvalidRecordException)
     end
   end
 
   context "making a bid" do
-    let(:auction){Auction.make seller, item, 10, extendable, end_date}
     let(:bidder){ObjectMother.create_user(email: "bidder@example.com")}
 
     it "should create a bid" do
@@ -42,8 +43,6 @@ describe Auction do
   end
 
   context "starting an auction" do
-    let(:auction){Auction.make seller, item, 10, extendable, end_date}
-
     it "should set status to started" do
       auction.start
       auction.reload.status.should == Auction::STARTED
@@ -51,8 +50,6 @@ describe Auction do
   end
 
   context "extending an auction" do
-    let(:auction){Auction.make seller, item, 10, extendable, end_date}
-
     it "should set status to started" do
       auction.extend_end_date_for 30.minutes
       auction.reload.end_date.should == end_date + 30.minutes
@@ -60,7 +57,6 @@ describe Auction do
   end
 
   context "assigning a winner" do
-    let(:auction){Auction.make seller, item, 10, extendable, end_date }
     let(:winner){ObjectMother.create_user(email: "seller@winner.com") }
 
     it "should set the winner" do
