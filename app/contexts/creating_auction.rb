@@ -1,24 +1,26 @@
 class CreatingAuction
   include Context
 
-  attr_reader :seller, :auction_creator
+  attr_reader :seller, :auction_creator, :listener
 
-  def self.create user, auction_params
-    c = CreatingAuction.new user, auction_params
+  def self.create user, auction_params, listener
+    c = CreatingAuction.new user, auction_params, listener
     c.create
   end
 
-  def initialize user, auction_params
+  def initialize user, auction_params, listener
+    @listener = listener
     @seller = user.extend Seller
     @auction_creator = auction_params.extend AuctionCreator
   end
 
   def create
     in_context do
-      return {auction: seller.start_auction}
+      auction = seller.start_auction
+      listener.create_on_success auction.id
     end
   rescue InvalidRecordException => e
-    {errors: e.errors}
+    listener.create_on_error e.errors
   end
 
   module Seller
@@ -36,8 +38,12 @@ class CreatingAuction
 
     def create_auction seller
       item = create_item
-      creation_attrs = attributes.merge(item: item, seller: seller)
-      Auction.make(creation_attrs)
+      Auction.make creation_attributes(item, seller)
+    end
+
+    def creation_attributes item, seller
+      basic_attrs = attributes.slice(:buy_it_now_price, :extendable, :end_date)
+      basic_attrs.merge(item: item, seller: seller)
     end
 
     def create_item

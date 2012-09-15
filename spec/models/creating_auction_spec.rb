@@ -3,60 +3,72 @@ require 'model_spec_helper'
 describe CreatingAuction do
   let(:seller){User.new}
 
-  let(:end_date_params) {
-    {"end_date(1i)" => "2013", "end_date(2i)"=>"8", "end_date(3i)"=>"26", "end_date(4i)"=>"15", "end_date(5i)"=>"24"}
-  }
-
-  let(:end_date){
-    DateTime.new(2013, 8, 26, 15, 24)
-  }
+  let(:end_date){DateTime.new(2013, 8, 26, 15, 24)}
 
   let(:auction_params) {
-    {item_name: "Item", item_description: "Description", buy_it_now_price: 10, extendable: true}
+    {item_name: "Item", item_description: "Description", buy_it_now_price: 10,
+     extendable: true, end_date: end_date}
   }
 
   let(:params){
-    params = auction_params.merge(end_date_params)
-    AuctionParams.new(params)
+    AuctionParams.new(auction_params)
   }
 
-  let(:expected_item){double("Item")}
+  let(:listener){stub.as_null_object}
 
-  let(:expected_auction){double("Auction", :start => nil)}
+  describe "Successful creation" do
+    let(:expected_item){double("Item")}
+    let(:expected_auction){double("Auction", id: 9999).as_null_object}
 
-  context "successful creation" do
-    before :each do
+    before do
+      Item.stub(:make){expected_item}
+      Auction.stub(:make){expected_auction}
+    end
+
+    it "creates an auction" do
       Item.should_receive(:make).with("Item", "Description").and_return(expected_item)
-      Auction.should_receive(:make).and_return(expected_auction)
+
+      expected_attrs = {buy_it_now_price: 10, extendable: true, end_date: end_date, seller: seller, item: expected_item}
+      Auction.should_receive(:make).with(expected_attrs)
+
+      create_auction
     end
 
-    it "should create an auction" do
-      actual_auction = create_auction[:auction]
-      actual_auction.should == expected_auction
-    end
-
-    it "should start the created auction" do
+    it "starts the created auction" do
       expected_auction.should_receive(:start)
+
+      create_auction
+    end
+
+    it "notifies the listener about the created auction" do
+      listener.should_receive(:create_on_success).with(expected_auction.id)
+
       create_auction
     end
   end
 
-  context "error handling" do
-    it "should return errors when cannot create an item" do
-      Item.should_receive(:make).and_raise(InvalidRecordException.new(%w{error1}))
-      create_auction[:errors].should be_present
+  describe "Error handling" do
+    let(:errors){%w{error1}}
+
+    it "notifies the listener when cannot create an item" do
+      Item.stub(:make).and_raise(InvalidRecordException.new(errors))
+      listener.should_receive(:create_on_error).with(errors)
+
+      create_auction
     end
 
-    it "should return errors when cannot create an auction" do
-      Item.should_receive(:make).with("Item", "Description").and_return(expected_item)
-      Auction.should_receive(:make).and_raise(InvalidRecordException.new(%w{error1}))
-      create_auction[:errors].should be_present
+    it "notifies the listener when cannot create an auction" do
+      Item.stub(:make)
+      Auction.stub(:make).and_raise(InvalidRecordException.new(errors))
+      listener.should_receive(:create_on_error).with(errors)
+
+      create_auction
     end
   end
 
   private
 
   def create_auction
-    CreatingAuction.new(seller, params).create
+    CreatingAuction.new(seller, params, listener).create
   end
 end
