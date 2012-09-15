@@ -23,7 +23,7 @@ class ClosingExpiredAuctions
     def close_if_expired
       return unless expired?
 
-      if winning_bid?
+      if has_winning_bid?
         close_with_winner
       else
         close_without_winner
@@ -38,12 +38,16 @@ class ClosingExpiredAuctions
       close
     end
 
-    def winning_bid?
+    def has_winning_bid?
       last_bid.present?
     end
 
     def expired?
-      end_date < DateTime.current and status == Auction::STARTED
+      end_date_in_past? and started?
+    end
+
+    def end_date_in_past?
+      end_date < DateTime.current
     end
   end
 end
