@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 feature "Creating an Auction", js: true do
-  let!(:user){ObjectMother.create_user}
+  let!(:user){ObjectMother.create_user_with_login_credentials}
 
   background do
     do_login! user

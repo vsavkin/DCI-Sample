@@ -5,7 +5,7 @@ describe AuctionsPresenter do
   let(:auctions){[Auction.new]}
   let(:presenter){AuctionsPresenter.new(auctions, current_user, stub)}
 
-  it "should wrap passed auctions into a presenter" do
+  it "wraps passed auctions into a presenter" do
     presenter.count.should == 1
     presenter.first.class.should == AuctionPresenter
   end

@@ -15,17 +15,17 @@ describe Context do
     include ContextAccessor
   end
 
-  context "#in_context" do
+  describe "#in_context" do
     let(:ctx){TestContext.new}
     let(:nested_ctx){TestContext.new}
     let(:role){TestRole.new}
 
-    it "should pass on returned value" do
+    it "passes on returned value" do
       return_value = ctx.run_in_context{"RETURNED VALUE"}
       return_value.should == "RETURNED VALUE"
     end
 
-    it "should maintain stack of contexts" do
+    it "maintains stack of contexts" do
       actual_context = ctx.run_in_context do
         nested_ctx.run_in_context{}
         role.context
@@ -33,7 +33,7 @@ describe Context do
       actual_context.should == ctx
     end
 
-    it "should maintain stack of contexts (nested case)" do
+    it "maintains stack of contexts (nested case)" do
       ctx.run_in_context do
         actual_nested_ctx = nested_ctx.run_in_context do
           role.context
