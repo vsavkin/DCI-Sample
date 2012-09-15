@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 feature "Creating an Auction", js: true do
-  let!(:user){User.create!(name: "Sam the Seller", email: "mail@email.com", password: "123456")}
+  let!(:user){ObjectMother.create_user}
 
   background do
     do_login! user
@@ -9,6 +9,7 @@ feature "Creating an Auction", js: true do
 
   scenario "Successfully creating an auction" do
     visit new_auction_path
+
     fill_in "auction_params_item_name", with: "Stamps"
     fill_in "Item description", with: "Collection of stamps"
     fill_in "Buy it now price", with: "200"
