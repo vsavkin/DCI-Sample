@@ -3,21 +3,13 @@ require 'spec_helper'
 feature "Buying an Item", js: true do
   let(:end_date) { Time.zone.now + 1.day}
 
-  let!(:seller){
-    User.create!(name: "Sam the Seller", email: "mail@email.com", password: "123456")
-  }
+  let!(:seller){ObjectMother.create_user}
 
-  let!(:item){
-    Item.create!(name: "Item 1")
-  }
+  let!(:item){Item.create!(name: "Item 1")}
 
-  let!(:auction){
-    make_auction end_date
-  }
+  let!(:auction){make_auction end_date}
 
-  let(:bidder){
-    User.create!(name: "Bob", email: "mail1@email.com", password: "123456")
-  }
+  let(:bidder){ObjectMother.create_user name: "Bob"}
 
   before :each do
     do_login! bidder
@@ -64,6 +56,6 @@ feature "Buying an Item", js: true do
   private
 
   def make_auction end_date
-    Auction.create!(item: item, seller: seller, buy_it_now_price: 10, end_date: end_date, status: Auction::STARTED)
+    ObjectMother.create_auction item: item, seller: seller, end_date: end_date
   end
 end
