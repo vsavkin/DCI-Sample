@@ -1,129 +1,145 @@
 require 'model_spec_helper'
 
 describe Bidding do
-  let(:buy_it_now_price){10000}
-  let(:auction){double("Auction", buy_it_now_price: buy_it_now_price, started?: true, end_date: 20.minutes.from_now)}
-  let(:another_bidder){User.new}
+  let(:listener){stub.as_null_object}
+
   let(:bidder){User.new}
+
+  let(:auction){double("Auction", buy_it_now_price: 999999, started?: true, end_date: Time.now)}
 
   before :each do
     auction.stub(:assign_winner)
     auction.stub(:extend_end_date_for)
-    auction.stub(:make_bid)
+    auction.stub(:make_bid){bid}
     auction.stub(:last_bid){nil}
   end
 
-  context "making a bid" do
-    let(:amount) {999}
+  describe "Bidding" do
+    let(:amount){777}
 
     example do
-      expect_bid_creation bidder, amount
-      make_bid(amount)
+      bid = bid(bidder: bidder, amount: amount)
+
+      auction.should_receive(:make_bid).with(bidder, amount).and_return(bid)
+
+      make_bid amount: amount
     end
 
-    it "should associate the bid with the auction" do
-      bid_creation bidder, amount
-      make_bid(amount)
-    end
+    it "notifies the listener about the created bid" do
+      listener.should_receive(:create_on_success)
 
-    it "should return the created bid" do
-      bid = bid_creation bidder, amount
-      response = make_bid(amount)
-      response[:bid].should == bid
-    end
-
-    it "should error when no amount" do
-      response = make_bid(nil)
-      response[:errors].should be_present
-    end
-
-    it "should error when invalid amount" do
-      response = make_bid("INVALID")
-      response[:errors].should be_present
-    end
-
-    it "should error when the bidder is bidding against himself" do
-      auction.stub(:last_bid).and_return(bid(bidder, amount - 1))
-      response = make_bid(amount)
-      response[:errors].should be_present
-    end
-
-    it "should error when the bid is not smaller then the previous one + 1 dollar" do
-      auction.stub(:last_bid).and_return(bid(another_bidder, amount))
-      response = make_bid(amount)
-      response[:errors].should be_present
-    end
-
-    it "should error when bidding on a closed auction" do
-      auction.stub(:started?).and_return(false)
-      response = make_bid(amount)
-      response[:errors].should be_present
-    end
-
-    context "buying" do
-      it "should assign winner" do
-        bid_creation bidder, buy_it_now_price
-        auction.should_receive(:assign_winner).with(bidder)
-        make_bid buy_it_now_price
-      end
-
-      it "should error when the bid greater than the buy it now price" do
-        response = make_bid(buy_it_now_price + 1)
-        response[:errors].should be_present
-      end
-    end
-
-    context "extending the auction" do
-      it "should extend the auction when the bid is made within extending interval" do
-        bid_creation bidder, amount
-        auction.stub(end_date: Time.now)
-        auction.should_receive(:extend_end_date_for).with(Bidding::EXTENDING_INTERVAL)
-        make_bid amount
-      end
-
-      it "should not extend when more time left" do
-        bid_creation bidder, amount
-        auction.stub(end_date: Time.now + 31.minute)
-        auction.should_not_receive(:extend_end_date_for)
-        make_bid amount
-      end
-
-      it "should not extend when auction is not started" do
-        bid_creation bidder, buy_it_now_price
-        auction.stub(end_date: Time.now, started?: false)
-        auction.should_not_receive(:extend_end_date_for)
-        make_bid amount
-      end
+      make_bid
     end
   end
 
-  context "error handling" do
-    it "should return errors when cannot make a bid" do
-      auction.should_receive(:make_bid).and_raise(InvalidRecordException.new([:error]))
-      make_bid(999).should == {errors: [:error]}
+  describe "Validations" do
+    let(:another_bidder){User.new}
+
+    it "errors when no amount" do
+      listener.should_receive(:create_on_error)
+
+      make_bid amount: nil
+    end
+
+    it "errors when an invalid amount" do
+      listener.should_receive(:create_on_error)
+
+      make_bid amount: "INVALID"
+    end
+
+    it "errors when the bidder is bidding against himself" do
+      amount = 777
+      auction.stub(:last_bid).and_return(bid(bidder: bidder, amount: amount - 1))
+
+      listener.should_receive(:create_on_error)
+
+      make_bid amount: amount
+    end
+
+    it "errors when the amount of the last bid is the same" do
+      auction.stub(:last_bid).and_return(bid(bidder: another_bidder, amount: 777))
+
+      listener.should_receive(:create_on_error)
+
+      make_bid amount: 777
+    end
+
+    it "errors when bidding on a closed auction" do
+      auction.stub(started?: false)
+
+      listener.should_receive(:create_on_error)
+
+      make_bid
+    end
+  end
+
+  describe "Extending the auction" do
+    it "increases the auction's end date when the bid is made within the extending interval" do
+      auction.stub(end_date: Time.now)
+
+      auction.should_receive(:extend_end_date_for).with(Bidding::EXTENDING_INTERVAL)
+
+      make_bid
+    end
+
+    it "does not extend when more time left" do
+      auction.stub(end_date: Time.now + 31.minute)
+
+      auction.should_not_receive(:extend_end_date_for)
+
+      make_bid
+    end
+
+    it "does not extend when auction is not started" do
+      auction.stub(end_date: Time.now, started?: false)
+
+      auction.should_not_receive(:extend_end_date_for)
+
+      make_bid
+    end
+  end
+
+  describe "Buying" do
+    let(:buy_it_now_price) {777}
+
+    it "assigns the winner" do
+      auction.stub(buy_it_now_price: buy_it_now_price,
+                   make_bid: bid(amount: buy_it_now_price))
+
+      auction.should_receive(:assign_winner).with(bidder)
+
+      make_bid amount: buy_it_now_price
+    end
+
+    it "notifies the listener when the bid greater than the buy it now price" do
+      auction.stub(buy_it_now_price: buy_it_now_price)
+
+      listener.should_receive(:create_on_error)
+
+      make_bid amount: buy_it_now_price + 1
+    end
+  end
+
+  describe "Error handling" do
+    it "notifies the listener when cannot make a bid" do
+      auction.stub(:make_bid).and_raise(InvalidRecordException.new([:error]))
+
+      listener.should_receive(:create_on_error).with([:error])
+
+      make_bid
     end
   end
 
   private
 
-  def bid_creation bidder, amount
-    bid = bid(bidder, amount)
-    auction.stub(:make_bid).with(bidder, amount).and_return(bid)
-    return bid
-  end
-
-  def expect_bid_creation bidder, amount
-    bid = bid(bidder, amount)
-    auction.should_receive(:make_bid).with(bidder, amount).and_return(bid)
-    return bid
-  end
-
-  def bid user, amount
-    stub(user: user, amount: amount)
-  end
-
-  def make_bid amount
+  def make_bid options = {}
+    amount = options.fetch(:amount, 999)
     params = BidParams.new(amount: amount, auction: auction)
-    Bidding.new(bidder, auction, params).bid
+    user = options.fetch(:bidder, bidder)
+    Bidding.new(user, auction, params, listener).bid
+  end
+
+  def bid options = {}
+    stub(user: options.fetch(:bidder, bidder), amount: options.fetch(:amount, 999))
   end
 end

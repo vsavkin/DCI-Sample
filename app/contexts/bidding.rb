@@ -4,36 +4,37 @@ class Bidding
 
   class ValidationException < Exception; end
 
-  def self.bid user, bid_params
+  def self.bid user, bid_params, listener
     auction = Auction.find(bid_params.auction_id)
-    bidding = Bidding.new user, auction, bid_params
+    bidding = Bidding.new user, auction, bid_params, listener
     bidding.bid
   end
 
-  def self.buy user, bid_params
+  def self.buy user, bid_params, listener
     auction = Auction.find(bid_params.auction_id)
     bid_params.amount = auction.buy_it_now_price
-    bidding = Bidding.new user, auction, bid_params
+    bidding = Bidding.new user, auction, bid_params, listener
     bidding.bid
   end
 
-  attr_reader :bidder, :biddable, :bid_creator
+  attr_reader :bidder, :biddable, :bid_creator, :listener
 
-  def initialize user, auction, bid_params
+  def initialize user, auction, bid_params, listener
     @bidder = user.extend Bidder
     @biddable = auction.extend Biddable
     @bid_creator = bid_params.extend BidCreator
+    @listener = listener
   end
 
   def bid
     in_context do
       bid = bidder.create_bid
-      return {bid: bid}
+      listener.create_on_success
     end
   rescue InvalidRecordException => e
-    {errors: e.errors}
+    listener.create_on_error e.errors
   rescue ValidationException => e
-    {errors: [e.message]}
+    listener.create_on_error [e.message]
   end
 
   module Bidder
