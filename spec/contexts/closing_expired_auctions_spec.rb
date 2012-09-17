@@ -2,7 +2,7 @@ require 'model_spec_helper'
 
 describe ClosingExpiredAuctions do
   context "expired auction" do
-    let(:bidder){stub}
+    let(:bidder){stub("Bidder")}
     let(:bid){stub(user: bidder)}
 
     it "closes an auction if its end date is in the past and it's started" do
@@ -20,18 +20,19 @@ describe ClosingExpiredAuctions do
 
   context "not expired auction" do
     it "doesn't close an auction if its end date is in the future" do
-      auction = stub(end_date: DateTime.current + 1.day, status: Auction::STARTED)
+      auction = stub(end_date: DateTime.current + 1.day, started?: true)
       ClosingExpiredAuctions.close [auction]
     end
 
     it "doesn't close an auction if it's not started" do
-      auction = stub(end_date: DateTime.current - 1.day, status: Auction::PENDING)
+      auction = stub(end_date: DateTime.current - 1.day, started?: false)
       ClosingExpiredAuctions.close [auction]
     end
   end
 
   private
+
   def expired_auction attrs = {}
-    mock({end_date: DateTime.current - 1.day, status: Auction::STARTED}.merge(attrs))
+    mock({end_date: DateTime.current - 1.day, started?: true}.merge(attrs))
   end
 end

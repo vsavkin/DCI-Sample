@@ -1,22 +1,20 @@
 class BidsController < ApplicationController
 
   def create
-    result = Bidding.bid(current_user, bid_params)
-    if success? result
-      flash[:notice] = "Your bid is accepted"
-    else
-      flash[:error] = result[:errors].join("\n")
-    end
-    redirect_to auction_path(params[:auction_id])
+    Bidding.bid(current_user, bid_params, self)
   end
 
   def buy
-    result = Bidding.buy(current_user, bid_params)
-    if success? result
-      flash[:notice] = "Purchased successfully performed"
-    else
-      flash[:error] = result[:errors].join("\n")
-    end
+    Bidding.buy(current_user, bid_params, self)
+  end
+
+  def create_on_success message
+    flash[:notice] = message
+    redirect_to auction_path(params[:auction_id])
+  end
+
+  def create_on_error errors
+    flash[:error] = errors.join("\n")
     redirect_to auction_path(params[:auction_id])
   end
 

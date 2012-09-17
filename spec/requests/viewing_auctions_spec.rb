@@ -4,13 +4,10 @@ feature "Viewing Auctions", js: true do
   let(:end_date) { DateTime.current + 1.day}
 
   background do
-    seller = User.create(name: "Sam the Seller", email: "mail@email.com", password: "123456")
+    seller = ObjectMother.create_user
 
-    item1 = Item.create!(name: "Item 1")
-    Auction.create!(item: item1, seller: seller, buy_it_now_price: 10, end_date: end_date, status: Auction::STARTED)
-
-    item2 = Item.create!(name: "Item 2")
-    Auction.create!(item: item2, seller: seller, buy_it_now_price: 10, end_date: end_date, status: Auction::STARTED)
+    ObjectMother.create_auction item: Item.create!(name: "Item 1"), seller: seller
+    ObjectMother.create_auction item: Item.create!(name: "Item 2"), seller: seller
   end
 
   scenario "Viewing all auctions" do

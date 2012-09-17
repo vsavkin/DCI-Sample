@@ -23,7 +23,7 @@ class AuctionParams
   private
 
   def build_end_date params
-    return unless has_end_date? params
+    return params unless has_end_date? params
 
     year = params["end_date(1i)"].to_i
     month = params["end_date(2i)"].to_i
@@ -32,7 +32,7 @@ class AuctionParams
     minute = params["end_date(5i)"].to_i
 
     date = DateTime.new(year, month, day, hour, minute)
-    params.merge(end_date: date)
+    params.reverse_merge(end_date: date)
   end
 
   def has_end_date? params
