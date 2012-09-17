@@ -5,7 +5,7 @@ describe Bidding do
 
   let(:bidder){User.new}
 
-  let(:auction){double("Auction", buy_it_now_price: 999999, started?: true, end_date: Time.now)}
+  let(:auction){double("Auction", buy_it_now_price: 999999, started?: true, end_date: Time.now + 1.day)}
 
   before :each do
     auction.stub(:assign_winner)
@@ -26,7 +26,7 @@ describe Bidding do
     end
 
     it "notifies the listener about the created bid" do
-      listener.should_receive(:create_on_success)
+      listener.should_receive(:create_on_success).with("Your bid is accepted.")
 
       make_bid
     end
@@ -97,14 +97,25 @@ describe Bidding do
 
       make_bid
     end
+
+    it "notifies the listener about the extension" do
+      auction.stub(end_date: Time.now)
+
+      listener.should_receive(:create_on_success).with("Your bid is accepted, and the auction has been extended for 30 minutes.")
+
+      make_bid
+    end
   end
 
   describe "Buying" do
     let(:buy_it_now_price) {777}
 
+    before do
+      auction.stub(buy_it_now_price: buy_it_now_price)
+    end
+
     it "assigns the winner" do
-      auction.stub(buy_it_now_price: buy_it_now_price,
-                   make_bid: bid(amount: buy_it_now_price))
+      auction.stub(make_bid: bid(amount: buy_it_now_price))
 
       auction.should_receive(:assign_winner).with(bidder)
 
@@ -112,11 +123,17 @@ describe Bidding do
     end
 
     it "notifies the listener when the bid greater than the buy it now price" do
-      auction.stub(buy_it_now_price: buy_it_now_price)
-
       listener.should_receive(:create_on_error)
 
       make_bid amount: buy_it_now_price + 1
+    end
+
+    it "notifies the listener about the purchase" do
+      auction.stub(make_bid: bid(amount: buy_it_now_price))
+
+      listener.should_receive(:create_on_success).with("Purchased successfully performed.")
+
+      make_bid amount: buy_it_now_price
     end
   end
 

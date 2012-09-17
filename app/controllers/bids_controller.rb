@@ -8,8 +8,8 @@ class BidsController < ApplicationController
     Bidding.buy(current_user, bid_params, self)
   end
 
-  def create_on_success
-    flash[:notice] = "Your bid is accepted."
+  def create_on_success message
+    flash[:notice] = message
     redirect_to auction_path(params[:auction_id])
   end
 
