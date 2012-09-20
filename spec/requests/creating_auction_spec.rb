@@ -13,7 +13,7 @@ feature "Creating an Auction", js: true do
     fill_in "auction_params_item_name", with: "Stamps"
     fill_in "Item description", with: "Collection of stamps"
     fill_in "Buy it now price", with: "200"
-    select "2017", from: "auction_params_end_date_1i"
+    fill_in "End date", with: "2020-01-01 00:00:00"
     click_button "Create"
 
     page.should have_content("Auction was successfully created.")
@@ -25,6 +25,7 @@ feature "Creating an Auction", js: true do
     fill_in "auction_params_item_name", with: ""
     fill_in "Item description", with: "Collection of stamps"
     fill_in "Buy it now price", with: "200"
+    fill_in "End date", with: "2020-01-01 00:00:00"
     click_button "Create"
 
     page.should have_content("Name can't be blank")

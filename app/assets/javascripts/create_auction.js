@@ -15,4 +15,9 @@ jQuery(function(){
   $('#new_auction_params').bind("ajax:success", function(event,xhr){
     window.location = xhr.auction_path
   })
+
+  $("#auction_params_end_date").datetimepicker({
+    dateFormat: 'yy/mm/dd',
+    timeFormat: 'hh:mm:ss'
+  })
 })
