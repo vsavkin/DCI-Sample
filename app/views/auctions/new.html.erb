@@ -20,7 +20,7 @@
     <%= f.check_box :extendable %>
 
     <%= f.label :end_date %>
-    <%= f.datetime_select :end_date, {use_month_numbers: true, start_year: Date.today.year}, {class: 'datetime'} %>
+    <input type="text" id="auction_params_end_date" name="auction_params[end_date]">
   </fieldset>
 
   <div class="form-actions">
