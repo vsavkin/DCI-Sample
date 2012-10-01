@@ -1,26 +1,50 @@
-<% content_for :title, "Create an Auction" %>
+<% content_for :title, "Sell Item" %>
 
-<h1>Create an Auction</h1>
+<%= form_for AuctionParams.empty, url: auctions_path, remote: true, html: {class: 'form-horizontal'} do |f| %>
+  <legend>Sell Item</legend>
 
-<div id="auction_params_errors" class="alert alert-block alert-error" style="display:none;">
-</div>
+  <div id="auction_params_errors" class="alert alert-block alert-error" style="display:none;">
+  </div>
 
-<%= form_for AuctionParams.empty, url: auctions_path, remote: true do |f| %>
   <fieldset>
-    <%= f.label :item_name %>
-    <%= f.text_field :item_name %>
+    <div class="control-group">
+      <%= f.label :item_name, "Name", class: 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :item_name %>
+      </div>
+    </div>
 
-    <%= f.label :item_description %>
-    <%= f.text_field :item_description %>
+    <div class="control-group">
+      <%= f.label :item_description, "Description", class: 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :item_description %>
+      </div>
+    </div>
 
-    <%= f.label :buy_it_now_price %>
-    <%= f.text_field :buy_it_now_price %>
+    <div class="control-group">
+      <%= f.label :buy_it_now_price, "Buy it now price", class: 'control-label' %>
+      <div class="controls">
+        <div class="input-prepend input-append">
+          <span class="add-on">$</span><%= f.text_field :buy_it_now_price, class: 'input-small' %><span class="add-on">.00</span>
+        </div>
+      </div>
+    </div>
 
-    <%= f.label :extendable %>
-    <%= f.check_box :extendable %>
+    <div class="control-group">
+      <%= f.label :end_date, class: 'control-label' %>
+      <div class="controls">
+        <input type="text" id="auction_params_end_date" name="auction_params[end_date]">
+      </div>
+    </div>
 
-    <%= f.label :end_date %>
-    <input type="text" id="auction_params_end_date" name="auction_params[end_date]">
+    <div class="control-group">
+      <div class="controls">
+        <%= f.label :extendable, class: "checkbox" do %>
+          <%= f.check_box :extendable %> Extendable
+        <% end %>
+      </div>
+    </div>
+
   </fieldset>
 
   <div class="form-actions">

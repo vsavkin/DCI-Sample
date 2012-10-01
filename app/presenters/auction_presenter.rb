@@ -5,7 +5,7 @@ class AuctionPresenter
   def_delegator :@item, :description, :item_description
   def_delegator :@seller, :name, :seller_name
 
-  def_delegators :@auction, :buy_it_now_price, :id, :created_at, :extendable, :end_date
+  def_delegators :@auction, :buy_it_now_price, :id, :created_at, :extendable
 
   def initialize auction, current_user, view_context
     @auction = auction
@@ -18,21 +18,27 @@ class AuctionPresenter
     @current_user = current_user
   end
 
+  def render_end_date
+    return "" unless @auction.end_date
+    h.content_tag :dl, class: "dl-horizontal" do
+      h.content_tag(:dt, "End Date") +
+      h.content_tag(:dd, @auction.end_date, id: "end-date")
+    end
+  end
+
   def render_winner
     return "" unless @winner
-    h.content_tag :p do
-      h.content_tag(:b, "Winner") +
-      h.tag(:br) +
-      h.content_tag(:span, @winner.name, id: "winner")
+    h.content_tag :dl, class: "dl-horizontal" do
+      h.content_tag(:dt, "Winner") +
+      h.content_tag(:dd, @winner.name, id: "winner")
     end
   end
 
   def render_last_bid
     return "" unless @auction.last_bid
-    h.content_tag :p do
-      h.content_tag(:b, "Last Bid") +
-      h.tag(:br) +
-      @auction.last_bid.amount.to_s
+    h.content_tag :dl, class: "dl-horizontal" do
+      h.content_tag(:dt, "Last Bid") +
+        h.content_tag(:dd, @auction.last_bid.amount.to_s, id: "last-bid")
     end
   end
 

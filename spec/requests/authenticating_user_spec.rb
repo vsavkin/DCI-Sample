@@ -8,6 +8,7 @@ feature "Authenticating user", js: true do
 
     within("#new_user") do
       fill_in "user_email", :with => "mail@mail.com"
+      fill_in "user_name", :with => "username"
       fill_in "user_password", :with => "123456"
       fill_in "user_password_confirmation", :with => "123456"
       click_button "Sign up"

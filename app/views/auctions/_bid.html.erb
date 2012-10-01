@@ -1,4 +1,6 @@
-<%= form_for BidParams.empty, url: auction_bids_path(auction_id) do |f| %>
-  <%= f.text_field :amount %>
+<%= form_for BidParams.empty, url: auction_bids_path(auction_id), html:{class: "form-inline", style: 'float: left; margin-right: 20px;'} do |f| %>
+  <div class="input-prepend input-append">
+    <span class="add-on">$</span><%= f.text_field :amount, class: 'input-small' %><span class="add-on">.00</span>
+  </div>
   <%= f.submit "Bid", class: "btn" %>
 <% end %>

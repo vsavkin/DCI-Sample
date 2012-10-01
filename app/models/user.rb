@@ -6,6 +6,9 @@ class User < ActiveRecord::Base
 
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me
 
+  validates :name, presence: true
+  validates :email, presence: true
+
   def address
     Address.new(address_country, address_city, address_street, address_postal_code)
   end

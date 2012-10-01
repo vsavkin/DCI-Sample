@@ -6,35 +6,23 @@
 </div>
 
 <h1><%= @auction.item_name %></h1>
+<%= @auction.item_description %>
 
-<p>
-  <b>Description</b><br>
-  <%= @auction.item_description %>
-</p>
+<dl class="dl-horizontal">
+  <dt>Seller</dt>
+  <dd><%= @auction.seller_name %></dd>
+</dl>
 
-<p>
-  <b>Seller</b><br>
-  <%= @auction.seller_name %>
-</p>
+<dl class="dl-horizontal">
+  <dt>Buy it now price</dt>
+  <dd><%= @auction.buy_it_now_price %></dd>
+</dl>
 
-<p>
-  <b>Price</b><br>
-  <%= @auction.buy_it_now_price %>
-</p>
-
-<p>
-  <b>Extendable</b><br>
-  <%= @auction.extendable %>
-</p>
-
-<p>
-  <b>End date</b><br>
-  <%= @auction.end_date %>
-</p>
-
-<%= @auction.render_last_bid %>
+<%= @auction.render_end_date %>
 
 <%= @auction.render_winner %>
+
+<%= @auction.render_last_bid %>
 
 <div class="form-actions">
   <%= @auction.render_actions %>

@@ -10,8 +10,8 @@ feature "Creating an Auction", js: true do
   scenario "Successfully creating an auction" do
     visit new_auction_path
 
-    fill_in "auction_params_item_name", with: "Stamps"
-    fill_in "Item description", with: "Collection of stamps"
+    fill_in "Name", with: "Stamps"
+    fill_in "Description", with: "Collection of stamps"
     fill_in "Buy it now price", with: "200"
     fill_in "End date", with: "2020-01-01 00:00:00"
     click_button "Create"
@@ -22,8 +22,8 @@ feature "Creating an Auction", js: true do
   scenario "Showing errors when cannot create an auction" do
     visit new_auction_path
 
-    fill_in "auction_params_item_name", with: ""
-    fill_in "Item description", with: "Collection of stamps"
+    fill_in "Name", with: ""
+    fill_in "Description", with: "Collection of stamps"
     fill_in "Buy it now price", with: "200"
     fill_in "End date", with: "2020-01-01 00:00:00"
     click_button "Create"
