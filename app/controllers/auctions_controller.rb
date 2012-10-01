@@ -1,4 +1,6 @@
 class AuctionsController < ApplicationController
+  before_filter :authenticate_user!, except: [:index, :show]
+
   def index
     @auctions = AuctionsPresenter.new(Auction.all, current_user, view_context)
   end

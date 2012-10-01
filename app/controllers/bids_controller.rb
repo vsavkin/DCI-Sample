@@ -1,4 +1,5 @@
 class BidsController < ApplicationController
+  before_filter :authenticate_user!
 
   def create
     Bidding.bid(current_user, bid_params, self)
