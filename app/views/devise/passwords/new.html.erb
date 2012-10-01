@@ -1,0 +1,20 @@
+<%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => {method: :post, class: 'form-horizontal'}) do |f| %>
+  <legend>Forgot your password?</legend>
+
+  <fieldset>
+    <%= devise_error_messages! %>
+
+    <div class="control-group">
+      <%= f.label :email, class: 'control-label' %>
+      <div class="controls">
+        <%= f.email_field :email %>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= f.submit "Send me reset password instructions", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
