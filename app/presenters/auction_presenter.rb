@@ -61,7 +61,7 @@ class AuctionPresenter
   def all_bids
     @auction.bids.map do |bid|
       h.content_tag :li do
-        "#{bid.user.name} $#{bid.amount}"
+        "#{bid.user.name} bids $#{bid.amount}"
       end.html_safe
     end.join("").html_safe
   end
