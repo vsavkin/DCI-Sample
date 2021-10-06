@@ -23,8 +23,3 @@ The application is a Rails project. There are a few reasons for it:
 ## Developers
 
 The application has been developed by Victor Savkin and Rinaldi Fonseca.
-
-## Read More
-
-[Read more about DCI and the project.](http://dci-in-ruby.info)
-
